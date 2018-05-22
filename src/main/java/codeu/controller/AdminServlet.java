@@ -23,7 +23,10 @@ public class AdminServlet extends HttpServlet {
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response)
             throws IOException, ServletException {
-        request.getRequestDispatcher("/WEB-INF/view/admin.jsp").forward(request, response);
+        if (admin.contains(username)) {
+            request.getRequestDispatcher("/WEB-INF/view/admin.jsp").forward(request, response);
+            return;
+        } 
     }
 
     public void doPost(HttpServletRequest request, HttpServletResponse response)
@@ -36,7 +39,6 @@ public class AdminServlet extends HttpServlet {
         if (admin.contains(username)) {
             //if(username.equals("anAdmin")){
             response.sendRedirect("/admin");
-            return;
         }
 
     }
