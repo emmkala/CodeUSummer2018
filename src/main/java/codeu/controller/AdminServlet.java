@@ -10,13 +10,13 @@ import java.util.*;
 import java.time.Instant;
 import codeu.model.data.Conversation;
 import codeu.model.data.User;
-import code.model.data.Message;
+import codeu.model.data.Message;
 import codeu.model.store.basic.ConversationStore;
 import codeu.model.store.basic.UserStore;
 
 
 public class AdminServlet extends HttpServlet {
-    List<String> admin = Arrays.asList("anAdmin", "Admin1", "Admin2");
+    Set<String> admin = new HashSet<>(Arrays.asList("anAdmin", "Admin1", "Admin2"));
     private UserStore userStore;
     private ConversationStore conversationStore;
 
