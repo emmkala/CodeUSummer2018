@@ -23,13 +23,14 @@
   <p>Here are some site stats:</p>
   <ul>
   <li>Users:
+           <a><%= request.getAttribute("numUser")%></a>
   <li>Conversations:
-  <%if(request.getSession().getAttribute("numofConvo") == null) {%>
-    <a>0</a>
-    <% }else { %>
-          <a><%= request.getSession().getAttribute("numofConvo")%></a>
-           <% } %> 
+          <a><%= request.getAttribute("numConvo") %></a>
   <li>Messages:
+           <a><%= request.getAttribute("numMessages") %></a>
+  <li>Most active user:
+  <li>Newest user:
+  <li>Wordiest user:
   </ul>
 </body>
 </html>
