@@ -33,6 +33,11 @@
       <a href="/login">Login</a>
     <% } %>
     <a href="/about.jsp">About</a>
+    <% if (request.getSession().getAttribute("user") != null) { %>
+              <% if (request.getAttribute("isAdmin") != null) { %>
+              <a href="/admin">Admin</a>
+    <% }} %>
+
   </nav>
 
   <div id="container">
