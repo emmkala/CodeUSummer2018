@@ -86,7 +86,6 @@ public class ChatServlet extends HttpServlet {
       throws IOException, ServletException {
     String requestUrl = request.getRequestURI();
     String conversationTitle = requestUrl.substring("/chat/".length());
-
     Conversation conversation = conversationStore.getConversationWithTitle(conversationTitle);
     if (conversation == null) {
       // couldn't find conversation, redirect to conversation list
@@ -142,6 +141,60 @@ public class ChatServlet extends HttpServlet {
 
     // this removes any HTML from the message content
     String cleanedMessageContent = Jsoup.clean(messageContent, Whitelist.none());
+
+    /* these couple of lines only do bold, italics and underlines, and can definetely be condensed
+       to allow less repitition, they also can be more error proof and allow for words at the end
+       of a sentence. I will continue to add more functionality to it, but this is the MVP at the
+       moment :) */
+
+    if(cleanedMessageContent.contains("**")){
+        int i = 0;
+        int j = 0;
+        while(cleanedMessageContent.charAt(i) != '*' && cleanedMessageContent.charAt(i+1) != '*')
+          i++;
+
+		    while(cleanedMessageContent.charAt(j) != '*' && cleanedMessageContent.charAt(j+1) != '*' || (cleanedMessageContent.charAt(j+2) != ' '))
+			    j++;
+
+        StringBuilder bold = new StringBuilder(cleanedMessageContent.charAt(i+3));
+		    for(int m = i+3; m < j; m++)
+			       bold.append(cleanedMessageContent.charAt(m));
+
+	      cleanedMessageContent = cleanedMessageContent.replace(bold, "<b>"+bold+"</b>");
+        cleanedMessageContent = cleanedMessageContent.replace("**", "");
+
+    } if(messageContent.contains("/*")){
+      int i = 0;
+      int j = 0;
+      while(cleanedMessageContent.charAt(i) != '/' && cleanedMessageContent.charAt(i+1) != '*')
+        i++;
+
+      while(cleanedMessageContent.charAt(j) != '/' && cleanedMessageContent.charAt(j+1) != '*' || (cleanedMessageContent.charAt(j+2) != ' '))
+        j++;
+
+      StringBuilder italic = new StringBuilder(cleanedMessageContent.charAt(i+3));
+      for(int m = i+3; m < j; m++)
+           italic.append(cleanedMessageContent.charAt(m));
+
+      cleanedMessageContent = cleanedMessageContent.replace(italic, "<i>"+italic+"</i>");
+      cleanedMessageContent = cleanedMessageContent.replace("/*", "");
+
+    } if(messageContent.contains("//")){
+      int i = 0;
+      int j = 0;
+      while(cleanedMessageContent.charAt(i) != '/' && cleanedMessageContent.charAt(i+1) != '/')
+        i++;
+
+      while(cleanedMessageContent.charAt(j) != '/' && cleanedMessageContent.charAt(j+1) != '/' || (cleanedMessageContent.charAt(j+2) != ' '))
+        j++;
+
+      StringBuilder underLine = new StringBuilder(cleanedMessageContent.charAt(i+3));
+      for(int m = i+3; m < j; m++)
+           underLine.append(cleanedMessageContent.charAt(m));
+
+      cleanedMessageContent = cleanedMessageContent.replace(underLine, "<u>"+underLine+"</u>");
+      cleanedMessageContent = cleanedMessageContent.replace("//", "");
+    }
 
     Message message =
         new Message(
