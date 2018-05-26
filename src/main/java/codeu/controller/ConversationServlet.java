@@ -72,6 +72,13 @@ public class ConversationServlet extends HttpServlet {
       throws IOException, ServletException {
     List<Conversation> conversations = conversationStore.getAllConversations();
     request.setAttribute("conversations", conversations);
+    String username = (String) request.getSession().getAttribute("user");
+    if (username != null) {
+        User user = userStore.getUser(username);
+        if (user.checkAdmin()){
+          request.setAttribute("isAdmin", "yes");
+        }
+    }
     request.getRequestDispatcher("/WEB-INF/view/conversations.jsp").forward(request, response);
   }
 
