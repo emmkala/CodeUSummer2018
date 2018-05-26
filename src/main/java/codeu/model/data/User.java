@@ -16,9 +16,11 @@ package codeu.model.data;
 
 import java.time.Instant;
 import java.util.UUID;
+import java.util.*;
 
 /** Class representing a registered user. */
 public class User {
+  Set<String> admin = new HashSet<>(Arrays.asList("anAdmin", "Admin1", "Admin2"));
   private final UUID id;
   private final String name;
   private final String passwordHash;
@@ -58,4 +60,7 @@ public class User {
   public Instant getCreationTime() {
     return creation;
   }
+
+  public boolean checkAdmin() {
+    return admin.contains(name);}
 }
