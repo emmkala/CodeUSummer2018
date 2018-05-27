@@ -150,7 +150,7 @@ public class ChatServlet extends HttpServlet {
 
     /* these couple of lines only do bold, italics and underlines, and can definetely be condensed
        to allow less repitition, they also can be more error proof and allow for words at the end
-       of a sentence. I will continue to add more functionality to it, but this is the MVP at the
+       of a sentence. I will coqntinue to add more functionality to it, but this is the MVP at the
        moment :) */
 
     if(cleanedMessageContent.contains("**")){
@@ -180,7 +180,7 @@ public class ChatServlet extends HttpServlet {
     while(styledMessage.charAt(i) != code1 && styledMessage.charAt(i+1) != code2)
       i++;
 
-    while(styledMessage.charAt(j) != code1 && styledMessage.charAt(j+1) != code2 || (styledMessage.charAt(j+2) != ' '))
+    while(styledMessage.charAt(j) != code1 || styledMessage.charAt(j+1) != code2 || (Character.isLetter(styledMessage.charAt(j+2))))
       j++;
 
     StringBuilder replacement = new StringBuilder(styledMessage.charAt(i+3));
@@ -190,8 +190,10 @@ public class ChatServlet extends HttpServlet {
     StringBuilder stringCode = new StringBuilder();
     stringCode.append(code1).append(code2);
 
-    styledMessage = styledMessage.replace(stringCode, "");
-    styledMessage = styledMessage.replace(replacement, "<"+type+">"+replacement+"</"+type+">");
+    StringBuilder stringCode2 = new StringBuilder();
+	  stringCode2.append(code1).append(code2);
+
+    styledMessage = styledMessage.replace(stringCode.append(replacement).append(stringCode2), "<"+type+">"+replacement+"</"+type+">");
 
     return styledMessage;
 
