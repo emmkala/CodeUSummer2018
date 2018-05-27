@@ -154,52 +154,11 @@ public class ChatServlet extends HttpServlet {
        moment :) */
 
     if(cleanedMessageContent.contains("**")){
-        int i = 0;
-        int j = 0;
-        while(cleanedMessageContent.charAt(i) != '*' && cleanedMessageContent.charAt(i+1) != '*')
-          i++;
-
-		    while(cleanedMessageContent.charAt(j) != '*' && cleanedMessageContent.charAt(j+1) != '*' || (cleanedMessageContent.charAt(j+2) != ' '))
-			    j++;
-
-        StringBuilder bold = new StringBuilder(cleanedMessageContent.charAt(i+3));
-		    for(int m = i+3; m < j; m++)
-			       bold.append(cleanedMessageContent.charAt(m));
-
-	      cleanedMessageContent = cleanedMessageContent.replace(bold, "<b>"+bold+"</b>");
-        cleanedMessageContent = cleanedMessageContent.replace("**", "");
-
+      cleanedMessageContent = stylizedText('*','*','b',cleanedMessageContent);
     } if(messageContent.contains("/*")){
-      int i = 0;
-      int j = 0;
-      while(cleanedMessageContent.charAt(i) != '/' && cleanedMessageContent.charAt(i+1) != '*')
-        i++;
-
-      while(cleanedMessageContent.charAt(j) != '/' && cleanedMessageContent.charAt(j+1) != '*' || (cleanedMessageContent.charAt(j+2) != ' '))
-        j++;
-
-      StringBuilder italic = new StringBuilder(cleanedMessageContent.charAt(i+3));
-      for(int m = i+3; m < j; m++)
-           italic.append(cleanedMessageContent.charAt(m));
-
-      cleanedMessageContent = cleanedMessageContent.replace(italic, "<i>"+italic+"</i>");
-      cleanedMessageContent = cleanedMessageContent.replace("/*", "");
-
+      cleanedMessageContent = stylizedText('/','*','i',cleanedMessageContent);
     } if(messageContent.contains("//")){
-      int i = 0;
-      int j = 0;
-      while(cleanedMessageContent.charAt(i) != '/' && cleanedMessageContent.charAt(i+1) != '/')
-        i++;
-
-      while(cleanedMessageContent.charAt(j) != '/' && cleanedMessageContent.charAt(j+1) != '/' || (cleanedMessageContent.charAt(j+2) != ' '))
-        j++;
-
-      StringBuilder underLine = new StringBuilder(cleanedMessageContent.charAt(i+3));
-      for(int m = i+3; m < j; m++)
-           underLine.append(cleanedMessageContent.charAt(m));
-
-      cleanedMessageContent = cleanedMessageContent.replace(underLine, "<u>"+underLine+"</u>");
-      cleanedMessageContent = cleanedMessageContent.replace("//", "");
+      cleanedMessageContent = stylizedText('/','/','u',cleanedMessageContent);
     }
 
     Message message =
@@ -211,8 +170,31 @@ public class ChatServlet extends HttpServlet {
             Instant.now());
 
     messageStore.addMessage(message);
-
     // redirect to a GET request
     response.sendRedirect("/chat/" + conversationTitle);
   }
+
+  public String stylizedText(char code1, char code2, char type, String styledMessage){
+    int i = 0;
+    int j = 0;
+    while(styledMessage.charAt(i) != code1 && styledMessage.charAt(i+1) != code2)
+      i++;
+
+    while(styledMessage.charAt(j) != code1 && styledMessage.charAt(j+1) != code2 || (styledMessage.charAt(j+2) != ' '))
+      j++;
+
+    StringBuilder replacement = new StringBuilder(styledMessage.charAt(i+3));
+    for(int m = i+3; m < j; m++)
+         replacement.append(styledMessage.charAt(m));
+
+    StringBuilder stringCode = new StringBuilder();
+    stringCode.append(code1).append(code2);
+
+    styledMessage = styledMessage.replace(stringCode, "");
+    styledMessage = styledMessage.replace(replacement, "<"+type+">"+replacement+"</"+type+">");
+
+    return styledMessage;
+
+  }
+
 }
