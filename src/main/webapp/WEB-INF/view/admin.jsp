@@ -17,7 +17,6 @@
     <a href="/admin">Admin</a>
   </nav>
   <h1>Administration</h1>
-
   <p>This is the admin page</p>
   <h2>Site Statistics</h2>
   <p>Here are some site stats:</p>
@@ -29,8 +28,17 @@
   <li>Messages:
            <a><%= request.getAttribute("numMessages") %></a>
   <li>Most active user:
+   <% if(request.getAttribute("mostActive") != null){ %>
+      <a><%= request.getAttribute("mostActive")  %></a>
+      <% } %>
   <li>Newest user:
+    <% if(request.getAttribute("lastUser") != null){ %>
+    <a><%= request.getAttribute("lastUser")  %></a>
+    <% } %>
   <li>Wordiest user:
+  <% if(request.getAttribute("wordiest") != null){ %>
+      <a><%= request.getAttribute("wordiest")  %></a>
+      <% } %>
   </ul>
 </body>
 </html>
