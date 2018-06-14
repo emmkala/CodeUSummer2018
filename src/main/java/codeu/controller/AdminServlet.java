@@ -77,7 +77,7 @@ public class AdminServlet extends HttpServlet {
         request.setAttribute("numConvo", numConvo);
         request.setAttribute("numUser", numUser);
         request.setAttribute("numMessages", numMessages);
-        request.setAttribute("lastUser", userStore.lastUser().getName());
+        request.setAttribute("lastUser", "foo");
         request.setAttribute("mostActive", actUser.getName());
         request.setAttribute("wordiest", wordUser.getName());
         String username = (String) request.getSession().getAttribute("user");
