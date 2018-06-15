@@ -128,5 +128,7 @@ public class UserStore {
   }
 
   public int numUsers() {return users.size();}
+
+  public User lastUser() {return users.get(users.size()-1);}
 }
 
