@@ -14,6 +14,7 @@
 
 package codeu.model.data;
 
+import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.util.UUID;
 import java.util.*;
@@ -25,6 +26,8 @@ public class User {
   private final String name;
   private final String passwordHash;
   private final Instant creation;
+  private Date birthday;
+  private String description;
 
   /**
    * Constructs a new User.
@@ -39,6 +42,7 @@ public class User {
     this.name = name;
     this.passwordHash = passwordHash;
     this.creation = creation;
+    setDescription("");
   }
 
   /** Returns the ID of this User. */
@@ -62,5 +66,27 @@ public class User {
   }
 
   public boolean checkAdmin() {
-    return admin.contains(name);}
+    return admin.contains(name);
+  }
+   
+  public Date getBirthday() {
+    return birthday;
+  }
+	
+  public String getBirthdayAsString() {
+	SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/YYYY");
+	return sdf.format(birthday);
+  }
+  
+  public void setBirthday(Date birthday) {
+    this.birthday = birthday;
+  }
+
+  public String getDescription() {
+	return description;
+  }
+
+  public void setDescription(String description) {
+	this.description = description;
+  }
 }
