@@ -1,5 +1,7 @@
+<%@ page import="java.text.SimpleDateFormat"%>
 <%@ page import="codeu.model.data.User"%>
 <%@ page import="codeu.model.store.basic.UserStore" %>
+<%@ page import="java.util.Date" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -51,7 +53,7 @@
     <form action="/user/<%=requestedProfile%>" method="POST">	
      <h2>Edit About Me</h2>
      <p>About Me:</p>
-     <input name = "updated description" type = "text" value="<%=user.getDescription()%>">
+     <input name = "updated description" type = "text" value="<%=user.getDescription()%>" width = "300" height="200">
   	 <br><br>
   
   	 <h2>Edit Birthday</h2>
@@ -60,6 +62,7 @@
      <%} else {%>
          <p>Birthday not set</p>
      <%}%>
+     
      <input name = "updated birthday" type = "date">
      
      <br>
