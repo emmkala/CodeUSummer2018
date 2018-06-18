@@ -15,7 +15,6 @@
 package codeu.controller;
 
 import java.io.IOException;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -24,16 +23,28 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.google.appengine.api.blobstore.BlobstoreService;
+import com.google.appengine.api.blobstore.BlobstoreServiceFactory;
+import com.google.appengine.api.images.ImagesService;
+import com.google.appengine.api.images.ImagesServiceFactory;
+
+import codeu.model.data.User.Sex;
 import codeu.model.data.User;
+import codeu.model.data.User.Occupation;
 import codeu.model.store.basic.UserStore;
 
 public class ProfileServlet extends HttpServlet {
 	private UserStore userStore;
 	
+	BlobstoreService blobstoreService;
+	ImagesService imagesService;
+	
 	@Override
 	public void init() throws ServletException {
 		super.init();
 		userStore = UserStore.getInstance();
+		blobstoreService = BlobstoreServiceFactory.getBlobstoreService();
+		imagesService = ImagesServiceFactory.getImagesService();
 	}
 
 	@Override
@@ -41,20 +52,55 @@ public class ProfileServlet extends HttpServlet {
 		String profileEditName = getNameFromURL(request.getRequestURL());
 		
 		User user = userStore.getUser(profileEditName);
-		
-		Date newBirthday = parseDate(request.getParameter("updated birthday"));
-		
-		if(newBirthday != null) {
-			user.setBirthday(newBirthday);
-		}
-		
-		String newDescription = request.getParameter("updated description");
-		
-		if(newDescription != null && newDescription.trim() != "") {
-			user.setDescription(newDescription);
-		}
-		
 		UserStore userStore = UserStore.getInstance();
+
+		try {
+			Date newBirthday = parseDate(request.getParameter("updated birthday"));
+			user.setBirthday(newBirthday);
+		} catch(NullPointerException e) {
+			System.out.println("Didn't set birthday");
+		}
+		
+		try {
+			String newDescription = request.getParameter("updated description");
+			
+			if(newDescription.trim() != "") {
+				user.setDescription(newDescription);
+			}
+		} catch(NullPointerException e) {
+			System.out.println("Didn't set description");
+		}
+		
+		try {
+			String newSex = request.getParameter("updated sex");
+			user.setSex(Sex.valueOf(newSex));
+		} catch(NullPointerException e) {
+			System.out.println("Didn't set sex");
+		}
+		
+		try {
+			String workStatus = request.getParameter("updated work status");
+			
+			Occupation occupation = null;
+			if(workStatus.equals("employed")) {
+				String employer = request.getParameter("updated employer");
+				String position = request.getParameter("updated position");
+				occupation = user.new Occupation(employer, position);
+			} else if (workStatus.equals("student")){
+				String school = request.getParameter("updated school");
+				int year = Integer.parseInt(request.getParameter("updated school year"));
+				occupation = user.new Occupation(school, year);
+			} else if (workStatus.equals("unemployed")) {
+				occupation = user.new Occupation();
+			} else {
+				System.out.println("Unrecongized work status");
+			}
+			
+			user.setOccupation(occupation);
+		} catch(NullPointerException e) {
+			System.out.println("Didn't set occupation");
+		}
+		
 		userStore.updateUser(user);
 		
 		doGet(request,response);
@@ -69,6 +115,8 @@ public class ProfileServlet extends HttpServlet {
 			return;
 		}
 		
+		request.setAttribute("blobstoreService", blobstoreService);
+		
 		request.setAttribute("requestedProfile", profileRequestName);
 	  	
 		if(request.getSession().getAttribute("user") != null) {
@@ -79,7 +127,6 @@ public class ProfileServlet extends HttpServlet {
 		}
 		
 		request.getRequestDispatcher("/WEB-INF/view/profile.jsp").forward(request, response);
-
 	}
 	
 	private Date parseDate(String in) {
@@ -88,7 +135,7 @@ public class ProfileServlet extends HttpServlet {
 		
 		try {
 			out = sdf.parse(in);
-		} catch (ParseException e) {
+		} catch (Exception e) {
 			out = null;
 		}
 		
