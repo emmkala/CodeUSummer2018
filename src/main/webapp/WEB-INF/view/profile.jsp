@@ -89,12 +89,14 @@
 			
 			<br>
 			<br>
-				
+
 			<h2>Work Status:</h2>
 			<select name="updated work status" id="workStatus" onchange="updateFields()">
 				<option value="employed">Employed</option>
 				<option value="unemployed">Unemployed</option>
+
 				<option value="student">Student</option>
+
 			</select>
 	        
 	        <div id="schoolField">

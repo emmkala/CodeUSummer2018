@@ -15,6 +15,7 @@
 package codeu.model.data;
 
 import java.text.SimpleDateFormat;
+import java.text.ParseException;
 import java.time.Instant;
 import java.util.UUID;
 
@@ -26,7 +27,6 @@ enum OccupationType{
 
 /** Class representing a registered user. */
 public class User {
-
 	public enum Sex {
 		MALE, FEMALE, UNKOWN
 	}
@@ -168,13 +168,13 @@ public class User {
 		private String school;
 		private String position;
 		private String employer;
-		
+
 		public Occupation(String school, int schoolYear){
 			this.occupationType = OccupationType.STUDENT;
 			this.school = school;
 			this.schoolYear = schoolYear;
 		}
-		
+
 		public Occupation(String employer, String position){
 			this.occupationType = OccupationType.EMPLOYED;
 			this.employer = employer;
@@ -246,9 +246,9 @@ public class User {
 					} else {
 						out+=" ";
 					}
-					
+
 					out += ";";
-					
+
 					if(employer != null || employer.trim() != "") {
 						out += employer;
 					} else {

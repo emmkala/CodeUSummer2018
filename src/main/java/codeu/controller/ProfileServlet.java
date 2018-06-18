@@ -101,6 +101,25 @@ public class ProfileServlet extends HttpServlet {
 			System.out.println("Didn't set occupation");
 		}
 		
+		String workStatus = request.getParameter("updated work status");
+		
+		Occupation occupation = null;
+		if(workStatus.equals("employed")) {
+			String employer = request.getParameter("updated employer");
+			String position = request.getParameter("updated position");
+			occupation = user.new Occupation(employer, position);
+		} else if (workStatus.equals("student")){
+			String school = request.getParameter("updated school");
+			int year = Integer.parseInt(request.getParameter("updated school year"));
+			occupation = user.new Occupation(school, year);
+		} else if (workStatus.equals("unemployed")) {
+			occupation = user.new Occupation();
+		} else {
+			System.out.println("Unrecongized work status");
+		}
+		
+		user.setOccupation(occupation);
+		
 		userStore.updateUser(user);
 		
 		doGet(request,response);
@@ -109,11 +128,24 @@ public class ProfileServlet extends HttpServlet {
 	@Override
 	public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
 		String profileRequestName = getNameFromURL(request.getRequestURL());
+		System.out.println(profileRequestName);
 		
-		if (!userStore.isUserRegistered(profileRequestName)) {
+		if (userStore.isUserRegistered(profileRequestName)) {
+			User requestedProfile = userStore.getUser(profileRequestName);
+		} else {
 			response.sendRedirect("../404.html");
 			return;
 		}
+		/*
+		Image displayedImage;
+		if(user.getProfileImage() == null) {
+			displayedImage = defaultImage;
+		} else {
+			displayedImage = user.getProfileImage();
+		}
+		
+		request.setAttribute("image", displayedImage);
+		*/
 		
 		request.setAttribute("blobstoreService", blobstoreService);
 		

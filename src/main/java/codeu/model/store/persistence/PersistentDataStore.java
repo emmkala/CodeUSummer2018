@@ -36,7 +36,6 @@ import java.util.UUID;
  * also performs writes of new of modified objects back to the Datastore.
  */
 public class PersistentDataStore {
-
 	// Handle to Google AppEngine's Datastore service.
 	private DatastoreService datastore;
 
