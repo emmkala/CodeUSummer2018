@@ -26,6 +26,7 @@ import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.datastore.Query.SortDirection;
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -35,149 +36,178 @@ import java.util.UUID;
  * also performs writes of new of modified objects back to the Datastore.
  */
 public class PersistentDataStore {
+	// Handle to Google AppEngine's Datastore service.
+	private DatastoreService datastore;
 
-  // Handle to Google AppEngine's Datastore service.
-  private DatastoreService datastore;
+	/**
+	 * Constructs a new PersistentDataStore and sets up its state to begin loading objects from the
+	 * Datastore service.
+	 */
+	public PersistentDataStore() {
+		datastore = DatastoreServiceFactory.getDatastoreService();
+	}
 
-  /**
-   * Constructs a new PersistentDataStore and sets up its state to begin loading objects from the
-   * Datastore service.
-   */
-  public PersistentDataStore() {
-    datastore = DatastoreServiceFactory.getDatastoreService();
-  }
+	/**
+	 * Loads all User objects from the Datastore service and returns them in a List.
+	 *
+	 * @throws PersistentDataStoreException if an error was detected during the load from the
+	 *     Datastore service
+	 */
+	public List<User> loadUsers() throws PersistentDataStoreException {
 
-  /**
-   * Loads all User objects from the Datastore service and returns them in a List.
-   *
-   * @throws PersistentDataStoreException if an error was detected during the load from the
-   *     Datastore service
-   */
-  public List<User> loadUsers() throws PersistentDataStoreException {
+		List<User> users = new ArrayList<>();
 
-    List<User> users = new ArrayList<>();
+		// Retrieve all users from the datastore.
+		Query query = new Query("chat-users");
+		PreparedQuery results = datastore.prepare(query);
 
-    // Retrieve all users from the datastore.
-    Query query = new Query("chat-users");
-    PreparedQuery results = datastore.prepare(query);
+		for (Entity entity : results.asIterable()) {
+			try {
+				UUID uuid = UUID.fromString((String) entity.getProperty("uuid"));
+				String userName = (String) entity.getProperty("username");
+				String passwordHash = (String) entity.getProperty("password_hash");
+				Instant creationTime = Instant.parse((String) entity.getProperty("creation_time"));
+				Date birthday = (Date) entity.getProperty("birthday");
+				String description = (String) entity.getProperty("description");
+				//String occupationString = (String) entity.getProperty("occupation");
+				User user = new User(uuid, userName, passwordHash, creationTime);
+				user.setBirthday(birthday);
+				user.setDescription(description);
+				//user.setOccupation(user.parseStorableValue(occupationString));
+				users.add(user);
+			} catch (Exception e) {
+				// In a production environment, errors should be very rare. Errors which may
+				// occur include network errors, Datastore service errors, authorization errors,
+				// database entity definition mismatches, or service mismatches.
+				throw new PersistentDataStoreException(e);
+			}
+		}
 
-    for (Entity entity : results.asIterable()) {
-      try {
-        UUID uuid = UUID.fromString((String) entity.getProperty("uuid"));
-        String userName = (String) entity.getProperty("username");
-        String passwordHash = (String) entity.getProperty("password_hash");
-        Instant creationTime = Instant.parse((String) entity.getProperty("creation_time"));
-        User user = new User(uuid, userName, passwordHash, creationTime);
-        users.add(user);
-      } catch (Exception e) {
-        // In a production environment, errors should be very rare. Errors which may
-        // occur include network errors, Datastore service errors, authorization errors,
-        // database entity definition mismatches, or service mismatches.
-        throw new PersistentDataStoreException(e);
-      }
-    }
+		return users;
+	}
 
-    return users;
-  }
+	/**
+	 * Loads all Conversation objects from the Datastore service and returns them in a List, sorted in
+	 * ascending order by creation time.
+	 *
+	 * @throws PersistentDataStoreException if an error was detected during the load from the
+	 *     Datastore service
+	 */
+	public List<Conversation> loadConversations() throws PersistentDataStoreException {
 
-  /**
-   * Loads all Conversation objects from the Datastore service and returns them in a List, sorted in
-   * ascending order by creation time.
-   *
-   * @throws PersistentDataStoreException if an error was detected during the load from the
-   *     Datastore service
-   */
-  public List<Conversation> loadConversations() throws PersistentDataStoreException {
+		List<Conversation> conversations = new ArrayList<>();
 
-    List<Conversation> conversations = new ArrayList<>();
+		// Retrieve all conversations from the datastore.
+		Query query = new Query("chat-conversations").addSort("creation_time", SortDirection.ASCENDING);
+		PreparedQuery results = datastore.prepare(query);
 
-    // Retrieve all conversations from the datastore.
-    Query query = new Query("chat-conversations").addSort("creation_time", SortDirection.ASCENDING);
-    PreparedQuery results = datastore.prepare(query);
+		for (Entity entity : results.asIterable()) {
+			try {
+				UUID uuid = UUID.fromString((String) entity.getProperty("uuid"));
+				UUID ownerUuid = UUID.fromString((String) entity.getProperty("owner_uuid"));
+				String title = (String) entity.getProperty("title");
+				Instant creationTime = Instant.parse((String) entity.getProperty("creation_time"));
+				Conversation conversation = new Conversation(uuid, ownerUuid, title, creationTime);
+				conversations.add(conversation);
+			} catch (Exception e) {
+				// In a production environment, errors should be very rare. Errors which may
+				// occur include network errors, Datastore service errors, authorization errors,
+				// database entity definition mismatches, or service mismatches.
+				throw new PersistentDataStoreException(e);
+			}
+		}
 
-    for (Entity entity : results.asIterable()) {
-      try {
-        UUID uuid = UUID.fromString((String) entity.getProperty("uuid"));
-        UUID ownerUuid = UUID.fromString((String) entity.getProperty("owner_uuid"));
-        String title = (String) entity.getProperty("title");
-        Instant creationTime = Instant.parse((String) entity.getProperty("creation_time"));
-        Conversation conversation = new Conversation(uuid, ownerUuid, title, creationTime);
-        conversations.add(conversation);
-      } catch (Exception e) {
-        // In a production environment, errors should be very rare. Errors which may
-        // occur include network errors, Datastore service errors, authorization errors,
-        // database entity definition mismatches, or service mismatches.
-        throw new PersistentDataStoreException(e);
-      }
-    }
+		return conversations;
+	}
 
-    return conversations;
-  }
+	/**
+	 * Loads all Message objects from the Datastore service and returns them in a List, sorted in
+	 * ascending order by creation time.
+	 *
+	 * @throws PersistentDataStoreException if an error was detected during the load from the
+	 *     Datastore service
+	 */
+	public List<Message> loadMessages() throws PersistentDataStoreException {
 
-  /**
-   * Loads all Message objects from the Datastore service and returns them in a List, sorted in
-   * ascending order by creation time.
-   *
-   * @throws PersistentDataStoreException if an error was detected during the load from the
-   *     Datastore service
-   */
-  public List<Message> loadMessages() throws PersistentDataStoreException {
+		List<Message> messages = new ArrayList<>();
 
-    List<Message> messages = new ArrayList<>();
+		// Retrieve all messages from the datastore.
+		Query query = new Query("chat-messages").addSort("creation_time", SortDirection.ASCENDING);
+		PreparedQuery results = datastore.prepare(query);
 
-    // Retrieve all messages from the datastore.
-    Query query = new Query("chat-messages").addSort("creation_time", SortDirection.ASCENDING);
-    PreparedQuery results = datastore.prepare(query);
+		for (Entity entity : results.asIterable()) {
+			try {
+				UUID uuid = UUID.fromString((String) entity.getProperty("uuid"));
+				UUID conversationUuid = UUID.fromString((String) entity.getProperty("conv_uuid"));
+				UUID authorUuid = UUID.fromString((String) entity.getProperty("author_uuid"));
+				Instant creationTime = Instant.parse((String) entity.getProperty("creation_time"));
+				String content = (String) entity.getProperty("content");
+				Message message = new Message(uuid, conversationUuid, authorUuid, content, creationTime);
+				messages.add(message);
+			} catch (Exception e) {
+				// In a production environment, errors should be very rare. Errors which may
+				// occur include network errors, Datastore service errors, authorization errors,
+				// database entity definition mismatches, or service mismatches.
+				throw new PersistentDataStoreException(e);
+			}
+		}
 
-    for (Entity entity : results.asIterable()) {
-      try {
-        UUID uuid = UUID.fromString((String) entity.getProperty("uuid"));
-        UUID conversationUuid = UUID.fromString((String) entity.getProperty("conv_uuid"));
-        UUID authorUuid = UUID.fromString((String) entity.getProperty("author_uuid"));
-        Instant creationTime = Instant.parse((String) entity.getProperty("creation_time"));
-        String content = (String) entity.getProperty("content");
-        Message message = new Message(uuid, conversationUuid, authorUuid, content, creationTime);
-        messages.add(message);
-      } catch (Exception e) {
-        // In a production environment, errors should be very rare. Errors which may
-        // occur include network errors, Datastore service errors, authorization errors,
-        // database entity definition mismatches, or service mismatches.
-        throw new PersistentDataStoreException(e);
-      }
-    }
+		return messages;
+	}
 
-    return messages;
-  }
+	/** Write a User object to the Datastore service. */
+	public void writeThrough(User user) {
+		Entity userEntity = new Entity("chat-users", user.getId().toString());
+		userEntity.setProperty("uuid", user.getId().toString());
+		userEntity.setProperty("username", user.getName());
+		userEntity.setProperty("password_hash", user.getPasswordHash());
+		userEntity.setProperty("creation_time", user.getCreationTime().toString());
+		userEntity.setProperty("birthday", user.getBirthday());
+		userEntity.setProperty("description", user.getDescription());
+		//userEntity.setProperty("occupation", user.getOccupation().storableValue());
+		datastore.put(userEntity);
+	}
 
-  /** Write a User object to the Datastore service. */
-  public void writeThrough(User user) {
-    Entity userEntity = new Entity("chat-users", user.getId().toString());
-    userEntity.setProperty("uuid", user.getId().toString());
-    userEntity.setProperty("username", user.getName());
-    userEntity.setProperty("password_hash", user.getPasswordHash());
-    userEntity.setProperty("creation_time", user.getCreationTime().toString());
-    datastore.put(userEntity);
-  }
+	/** Write a Message object to the Datastore service. */
+	public void writeThrough(Message message) {
+		Entity messageEntity = new Entity("chat-messages", message.getId().toString());
+		messageEntity.setProperty("uuid", message.getId().toString());
+		messageEntity.setProperty("conv_uuid", message.getConversationId().toString());
+		messageEntity.setProperty("author_uuid", message.getAuthorId().toString());
+		messageEntity.setProperty("content", message.getContent());
+		messageEntity.setProperty("creation_time", message.getCreationTime().toString());
+		datastore.put(messageEntity);
+	}
 
-  /** Write a Message object to the Datastore service. */
-  public void writeThrough(Message message) {
-    Entity messageEntity = new Entity("chat-messages", message.getId().toString());
-    messageEntity.setProperty("uuid", message.getId().toString());
-    messageEntity.setProperty("conv_uuid", message.getConversationId().toString());
-    messageEntity.setProperty("author_uuid", message.getAuthorId().toString());
-    messageEntity.setProperty("content", message.getContent());
-    messageEntity.setProperty("creation_time", message.getCreationTime().toString());
-    datastore.put(messageEntity);
-  }
+	/** Write a Conversation object to the Datastore service. */
+	public void writeThrough(Conversation conversation) {
+		Entity conversationEntity = new Entity("chat-conversations", conversation.getId().toString());
+		conversationEntity.setProperty("uuid", conversation.getId().toString());
+		conversationEntity.setProperty("owner_uuid", conversation.getOwnerId().toString());
+		conversationEntity.setProperty("title", conversation.getTitle());
+		conversationEntity.setProperty("creation_time", conversation.getCreationTime().toString());
+		datastore.put(conversationEntity);
+	}
 
-  /** Write a Conversation object to the Datastore service. */
-  public void writeThrough(Conversation conversation) {
-    Entity conversationEntity = new Entity("chat-conversations", conversation.getId().toString());
-    conversationEntity.setProperty("uuid", conversation.getId().toString());
-    conversationEntity.setProperty("owner_uuid", conversation.getOwnerId().toString());
-    conversationEntity.setProperty("title", conversation.getTitle());
-    conversationEntity.setProperty("creation_time", conversation.getCreationTime().toString());
-    datastore.put(conversationEntity);
-  }
+	public void clearData() {
+		// Retrieve all users from the datastore.
+		Query chatUsers = new Query("chat-users");
+		PreparedQuery results = datastore.prepare(chatUsers);
+		for(Entity user: results.asIterable()) {
+			datastore.delete(user.getKey());
+		}
+		
+		Query conversations = new Query("chat-conversations");
+		results = datastore.prepare(conversations);
+		for(Entity conversation: results.asIterable()) {
+			datastore.delete(conversation.getKey());
+		}
+		
+		Query messages = new Query("chat-messages");
+		results = datastore.prepare(messages);
+		for(Entity message: results.asIterable()) {
+			datastore.delete(message.getKey());
+		}
+	}
 }
 

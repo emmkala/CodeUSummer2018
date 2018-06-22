@@ -13,10 +13,10 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 --%>
-<%@ page import="java.util.List" %>
-<%@ page import="codeu.model.data.Conversation" %>
-<%@ page import="codeu.model.data.Message" %>
-<%@ page import="codeu.model.store.basic.UserStore" %>
+<%@ page import="java.util.List"%>
+<%@ page import="codeu.model.data.Conversation"%>
+<%@ page import="codeu.model.data.Message"%>
+<%@ page import="codeu.model.store.basic.UserStore"%>
 <%
 Conversation conversation = (Conversation) request.getAttribute("conversation");
 List<Message> messages = (List<Message>) request.getAttribute("messages");
@@ -25,18 +25,19 @@ List<Message> messages = (List<Message>) request.getAttribute("messages");
 <!DOCTYPE html>
 <html>
 <head>
-  <title><%= conversation.getTitle() %></title>
-  <link rel="stylesheet" href="/css/main.css" type="text/css">
+<title><%= conversation.getTitle() %></title>
+<link rel="stylesheet" href="/css/main.css" type="text/css">
 
-  <style>
-    #chat {
-      background-color: white;
-      height: 500px;
-      overflow-y: scroll
-    }
-  </style>
+<style>
+#chat {
+	background-color: white;
+	height: 500px;
+	overflow-y: scroll
+}
 
-  <script>
+</style>
+
+<script>
     // scroll the chat div to the bottom
     function scrollChat() {
       var chatDiv = document.getElementById('chat');
@@ -46,58 +47,113 @@ List<Message> messages = (List<Message>) request.getAttribute("messages");
 </head>
 <body onload="scrollChat()">
 
-  <nav>
-    <a id="navTitle" href="/">CodeU Chat App</a>
-    <a href="/conversations">Conversations</a>
-      <% if (request.getSession().getAttribute("user") != null) { %>
-    <a>Hello <%= request.getSession().getAttribute("user") %>!</a>
-    <% } else { %>
-      <a href="/login">Login</a>
-    <% } %>
-    <a href="/about.jsp">About</a>
-    <% if (request.getSession().getAttribute("user") != null) { %>
-        <% if (request.getAttribute("isAdmin") != null) { %>
-        <a href="/admin">Admin</a>
-    <% }} %>
+	<nav>
+		<a id="navTitle" href="/">CodeU Chat App</a> <a href="/conversations">Conversations</a>
+		<% if (request.getSession().getAttribute("user") != null) { %>
+			<a>Hello <%= request.getSession().getAttribute("user") %>!</a>
+		<% } else { %>
+			<a href="/login">Login</a>
+		<% } %>
+		<a href="/about.jsp">About</a>
+		<% if (request.getSession().getAttribute("user") != null) { %>
+			<% if (request.getAttribute("isAdmin") != null) { %>
+				<a href="/admin">Admin</a>
+			<% } %>
+		<%} %>
 
-  </nav>
+	</nav>
 
-  <div id="container">
+	<div id="container">
+		<h1><%= conversation.getTitle() %>
+			<a href="" style="float: right">&#8635;</a>
+		</h1>
 
-    <h1><%= conversation.getTitle() %>
-      <a href="" style="float: right">&#8635;</a></h1>
+		<hr/>
 
-    <hr/>
+		<!--
+					IN PROGRESS WORK ON POP MENU
+					
+					HTML:
+					<div class="author">
+					  David Lawson
+					  <div class="popup">
+					    <img class="image" src="https://yogifil.la/200/200">
+					    <h3 class="name"> David Lawson </h3>
+					    <p class="description">Baseball player for Atlanta Braves</p>
+					    <p class="email">dLawson@gmail.com</p>
+					  </div>
+					</div>
+					
+					CSS:
+					.popup {
+					  position: absolute;
+					  background-color: black;
+					  left: 100px;
+					  display: none;
+					}
+					
+					.image {
+					  height: 100px;
+					  width: 100px;
+					}
+					
+					.name {
+					  position: absolute;
+					  bottom: 65px;
+					  left: 105px;
+					  white-space: nowrap;
+					}
+					
+					.description {
+					  position: absolute;
+					  font-size: 12px;
+					  bottom: 50px;
+					  left: 105px;
+					  white-space: nowrap;
+					}
+					
+					.email {
+					  position: absolute;
+					  font-size: 12px;
+					  bottom: 30px;
+					  left: 105px;
+					  white-space: nowrap;
+					}
+					
+					.author:hover .popup {
+					  display: block;
+					}
+		-->
+		<div id="chat">
+			<ul>
+				<%
+				for (Message message : messages) {
+				  String author = UserStore.getInstance()
+				    .getUser(message.getAuthorId()).getName();
+				%>
+					<li>
+						<a href=<%="/user/"+author%> id="Author"><%= author %></a>:<%= message.getContent() %>
+					</li>
+				<%}%>
+			</ul>
+		</div>
 
-    <div id="chat">
-      <ul>
-    <%
-      for (Message message : messages) {
-        String author = UserStore.getInstance()
-          .getUser(message.getAuthorId()).getName();
-    %>
-      <li><strong><%= author %>:</strong> <%= message.getContent() %></li>
-    <%
-      }
-    %>
-      </ul>
-    </div>
+		<hr/>
 
-    <hr/>
+		<% if (request.getSession().getAttribute("user") != null) { %>
+			<form action="/chat/<%= conversation.getTitle() %>" method="POST">
+				<input type="text" name="message"> <br />
+				<button type="submit">Send</button>
+			</form>
+		<% } else { %>
+			<p>
+				<a href="/login">Login</a> to send a message.
+			</p>
+		<% } %>
 
-    <% if (request.getSession().getAttribute("user") != null) { %>
-    <form action="/chat/<%= conversation.getTitle() %>" method="POST">
-        <input type="text" name="message">
-        <br/>
-        <button type="submit">Send</button>
-    </form>
-    <% } else { %>
-      <p><a href="/login">Login</a> to send a message.</p>
-    <% } %>
+		<hr/>
 
-    <hr/>
-
-  </div>
+	</div>
 
 </body>
 </html>
