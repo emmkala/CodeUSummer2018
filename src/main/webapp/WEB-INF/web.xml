@@ -75,17 +75,17 @@
     <servlet-name>AdminServlet</servlet-name>
     <url-pattern>/admin</url-pattern>
   </servlet-mapping>
-  
+
   <servlet>
   	<servlet-name>ProfileServlet</servlet-name>
   	<servlet-class>codeu.controller.ProfileServlet</servlet-class>
   </servlet>
-  
+
   <servlet-mapping>
   	<servlet-name>ProfileServlet</servlet-name>
   	<url-pattern>/user/*</url-pattern>
   </servlet-mapping>
-  
+
   <servlet>
   	<servlet-name>UploadServlet</servlet-name>
   	<servlet-class>codeu.controller.UploadServlet</servlet-class>
@@ -95,5 +95,4 @@
   	<servlet-name>UploadServlet</servlet-name>
   	<url-pattern>/upload</url-pattern>
   </servlet-mapping>
-
 </web-app>
