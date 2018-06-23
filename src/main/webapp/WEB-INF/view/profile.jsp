@@ -4,6 +4,11 @@
 <%@ page import="codeu.model.data.User"%>
 <%@ page import="codeu.model.store.basic.UserStore"%>
 <%@ page import="java.util.Date"%>
+<%@ page import="codeu.model.data.Conversation" %>
+<%@ page import="codeu.model.data.Message" %>
+<%@ page import="java.util.List" %>
+<%@ page import="codeu.model.store.basic.MessageStore" %>
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -21,12 +26,12 @@
 		<a href="/about.jsp">About</a>
 	</nav>
 
-	<%    
+	<%
     String requestedProfile = (String) request.getAttribute("requestedProfile");
     User user = UserStore.getInstance().getUser(requestedProfile);
   	boolean canEdit = (boolean) request.getAttribute("canEdit");
  	%>
- 	
+
 	<%if(!canEdit) {%>
 		<img src=<%=user.getProfileImage().getURL()%> height = "150" width = "150">
 		<h1><%=user.getName()%>'s Page</h1>
@@ -37,17 +42,27 @@
 		<%} else {%>
 			<p>no description</p>
 		<%}%>
-	
+
 		<br>
 		<br>
-	
+
 		<h2><%=user.getName()%>'s Birthday
 		</h2>
+
 		<%if(user.getBirthday() != null) {%>
 			<p><%=user.getBirthday()%></p>
 		<%} else {%>
 			<p>Birthday not set</p>
 		<%}%>
+
+		<h2><%=user.getName()%>'s Posts</h2>
+
+		<%List<Message> allMessages = MessageStore.getAllMessages();%>
+		<% for(Message mess : allMessages){
+			System.out.println("counting messages");
+		} %>
+
+
 	<%} else {%>
 		<img src=<%=user.getProfileImage().getURL()%> height = "150" width = "200">
 		<h1>Your profile</h1>
@@ -56,37 +71,39 @@
 			<input type="file" name="profileImage">
 			<input type="submit" value="Upload Image">
 		</form>
-		
+
+		<h2>Your Posts</h2>
+
 		<hr/>
-		
+
 		<form action="/user/<%=requestedProfile%>" method="POST">
 			<h2>Edit About Me</h2>
-			
+
 			<p>About Me:</p>
 			<input name="updated description" type="text"
 				value="<%=user.getDescription()%>" width="300" height="200">
-	
-			<br> 
+
 			<br>
-	
+			<br>
+
 			<h2>Edit Birthday</h2>
 			<%if(user.getBirthday() == null) {%>
 				<p>Birthday not set</p>
 			<%} else {%>
 				<p>Birthday:<%=user.getBirthdayAsString()%></p>
 			<%}%>
-	
-			<input name="updated birthday" type="date"> 
-			
-			<br> 
+
+			<input name="updated birthday" type="date">
+
 			<br>
-	
-			<h3>Sex: </h3> 
+			<br>
+
+			<h3>Sex: </h3>
 			<select name="updated sex">
 				<option value="MALE">Male</option>
 				<option value="FEMALE">Female</option>
 			</select>
-			
+
 			<br>
 			<br>
 
@@ -98,12 +115,12 @@
 				<option value="student">Student</option>
 
 			</select>
-	        
+
 	        <div id="schoolField">
 	        	<h3>High School/University</h3>
 	        	<input name="updated school name" type="text" name="school">
 			</div>
-	        
+
 	        <div id="schoolYearField">
 	        	<h3>Year</h3>
 	        	<select name="updated school year">
@@ -113,17 +130,17 @@
 	                <option value=4>Senior</option>
 	             </select>
 	        </div>
-	        
+
 	        <div id="employerField">
 	        	<h3>Employer</h3>
 	        	<input name="updated employer" type="text" name="employer">
 			</div>
-	           
+
 	        <div id="positionField">
 	        	<h3>Position</h3>
 	        	<input name="updated position" type="text" name="position">
 			</div>
-	       
+
 			<script>
 	        	function updateFields(){
 	              var workStatus = document.getElementById("workStatus");
@@ -131,13 +148,13 @@
 	              var schoolYearField = document.getElementById("schoolYearField");
 	              var employerField = document.getElementById("employerField");
 	              var positionField = document.getElementById("positionField");
-	
+
 	              if(workStatus.value == "employed"){
 	              	  schoolField.style.display = "none";
 	                  schoolYearField.style.display = "none";
 	                  employerField.style.display = "block";
 	                  positionField.style.display = "block";
-	                  
+
 	              }
 	              if(workStatus.value == "student"){
 	                  schoolField.style.display = "block";
@@ -154,13 +171,12 @@
 	            }
 	            updateFields();
 	     	</script>
-			
+
 			<br>
 			<br>
-			
+
 			<input type="submit" value="Update">
 		</form>
 	<%}%>
 </body>
-</html> 
-    
+</html>
