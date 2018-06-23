@@ -56,69 +56,59 @@ public class ProfileServlet extends HttpServlet {
 
 		try {
 			Date newBirthday = parseDate(request.getParameter("updated birthday"));
-			user.setBirthday(newBirthday);
+			if(newBirthday != null) {
+				user.setBirthday(newBirthday);
+			}
 		} catch(NullPointerException e) {
-			System.out.println("Didn't set birthday");
-		}
+			//Do nothing
+		}		
 		
 		try {
 			String newDescription = request.getParameter("updated description");
 			
-			if(newDescription.trim() != "") {
+			if(newDescription.trim().equals("")) {
 				user.setDescription(newDescription);
 			}
 		} catch(NullPointerException e) {
-			System.out.println("Didn't set description");
+			//Do nothing
 		}
 		
 		try {
 			String newSex = request.getParameter("updated sex");
 			user.setSex(Sex.valueOf(newSex));
 		} catch(NullPointerException e) {
-			System.out.println("Didn't set sex");
+			//Do nothing
 		}
 		
 		try {
-			String workStatus = request.getParameter("updated work status");
-			
-			Occupation occupation = null;
-			if(workStatus.equals("employed")) {
-				String employer = request.getParameter("updated employer");
-				String position = request.getParameter("updated position");
-				occupation = user.new Occupation(employer, position);
-			} else if (workStatus.equals("student")){
-				String school = request.getParameter("updated school");
-				int year = Integer.parseInt(request.getParameter("updated school year"));
-				occupation = user.new Occupation(school, year);
-			} else if (workStatus.equals("unemployed")) {
-				occupation = user.new Occupation();
-			} else {
-				System.out.println("Unrecongized work status");
+			String newEmail = request.getParameter("updated email");
+			if(!newEmail.trim().equals("")) {
+				user.setEmail(newEmail);
 			}
-			
-			user.setOccupation(occupation);
 		} catch(NullPointerException e) {
-			System.out.println("Didn't set occupation");
+			//Do nothing
 		}
 		
 		String workStatus = request.getParameter("updated work status");
-		
-		Occupation occupation = null;
-		if(workStatus.equals("employed")) {
-			String employer = request.getParameter("updated employer");
-			String position = request.getParameter("updated position");
-			occupation = user.new Occupation(employer, position);
-		} else if (workStatus.equals("student")){
-			String school = request.getParameter("updated school");
-			int year = Integer.parseInt(request.getParameter("updated school year"));
-			occupation = user.new Occupation(school, year);
-		} else if (workStatus.equals("unemployed")) {
-			occupation = user.new Occupation();
-		} else {
-			System.out.println("Unrecongized work status");
+		System.out.println(workStatus);
+		if(workStatus != "default") {
+			if(workStatus.equals("employed")) {
+				String employer = request.getParameter("updated employer");
+				String position = request.getParameter("updated position");
+				if(employer != null && position != null &
+						!employer.trim().equals("") && !position.trim().equals("")) {
+					user.setOccupation(user.new Occupation(employer, position));
+				}
+			} else if (workStatus.equals("student")){
+				String school = request.getParameter("updated school");
+				int year = Integer.parseInt(request.getParameter("updated school year"));
+				if(school != null && !school.trim().equals("") && year != 0) {	
+					user.setOccupation(user.new Occupation(school, year));
+				}
+			} else  {
+				user.setOccupation(user.new Occupation());
+			}
 		}
-		
-		user.setOccupation(occupation);
 		
 		userStore.updateUser(user);
 		
@@ -128,24 +118,11 @@ public class ProfileServlet extends HttpServlet {
 	@Override
 	public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
 		String profileRequestName = getNameFromURL(request.getRequestURL());
-		System.out.println(profileRequestName);
 		
-		if (userStore.isUserRegistered(profileRequestName)) {
-			User requestedProfile = userStore.getUser(profileRequestName);
-		} else {
+		if (!userStore.isUserRegistered(profileRequestName)) {
 			response.sendRedirect("../404.html");
 			return;
 		}
-		/*
-		Image displayedImage;
-		if(user.getProfileImage() == null) {
-			displayedImage = defaultImage;
-		} else {
-			displayedImage = user.getProfileImage();
-		}
-		
-		request.setAttribute("image", displayedImage);
-		*/
 		
 		request.setAttribute("blobstoreService", blobstoreService);
 		

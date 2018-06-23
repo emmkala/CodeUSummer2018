@@ -16,6 +16,7 @@
 <%@ page import="java.util.List"%>
 <%@ page import="codeu.model.data.Conversation"%>
 <%@ page import="codeu.model.data.Message"%>
+<%@ page import="codeu.model.data.User"%>
 <%@ page import="codeu.model.store.basic.UserStore"%>
 <%
 Conversation conversation = (Conversation) request.getAttribute("conversation");
@@ -26,16 +27,8 @@ List<Message> messages = (List<Message>) request.getAttribute("messages");
 <html>
 <head>
 <title><%= conversation.getTitle() %></title>
+<link rel="stylesheet" href="/css/chat.css" type="text/css">
 <link rel="stylesheet" href="/css/main.css" type="text/css">
-
-<style>
-#chat {
-	background-color: white;
-	height: 500px;
-	overflow-y: scroll
-}
-
-</style>
 
 <script>
     // scroll the chat div to the bottom
@@ -70,69 +63,29 @@ List<Message> messages = (List<Message>) request.getAttribute("messages");
 
 		<hr/>
 
-		<!--
-					IN PROGRESS WORK ON POP MENU
-					
-					HTML:
-					<div class="author">
-					  David Lawson
-					  <div class="popup">
-					    <img class="image" src="https://yogifil.la/200/200">
-					    <h3 class="name"> David Lawson </h3>
-					    <p class="description">Baseball player for Atlanta Braves</p>
-					    <p class="email">dLawson@gmail.com</p>
-					  </div>
-					</div>
-					
-					CSS:
-					.popup {
-					  position: absolute;
-					  background-color: black;
-					  left: 100px;
-					  display: none;
-					}
-					
-					.image {
-					  height: 100px;
-					  width: 100px;
-					}
-					
-					.name {
-					  position: absolute;
-					  bottom: 65px;
-					  left: 105px;
-					  white-space: nowrap;
-					}
-					
-					.description {
-					  position: absolute;
-					  font-size: 12px;
-					  bottom: 50px;
-					  left: 105px;
-					  white-space: nowrap;
-					}
-					
-					.email {
-					  position: absolute;
-					  font-size: 12px;
-					  bottom: 30px;
-					  left: 105px;
-					  white-space: nowrap;
-					}
-					
-					.author:hover .popup {
-					  display: block;
-					}
-		-->
 		<div id="chat">
 			<ul>
 				<%
 				for (Message message : messages) {
-				  String author = UserStore.getInstance()
+				  String authorName = UserStore.getInstance()
 				    .getUser(message.getAuthorId()).getName();
+				  User author = UserStore.getInstance().getUser(authorName);
 				%>
 					<li>
-						<a href=<%="/user/"+author%> id="Author"><%= author %></a>:<%= message.getContent() %>
+						<!-- Creates a pop-up that comes up when you hover over a person's name -->
+						<span class="author">
+						  <a href=<%="/user/"+authorName%>><%=authorName + " "%></a>
+						  <div class="popup">
+							    <img class="popup-image" src="<%=author.getProfileImage().getURL()%>">
+							    <div class="popup-text">
+								    <h3 class="popup-name"> <%=authorName%> </h3>
+								    <p class="popup-occupation"><%=author.getOccupation()%></p>
+								    <p class="popup-email"><%=author.getEmail()%></p>
+								</div>
+						  </div>
+						</span>
+						<!--  Shows message contents -->
+						: <%=message.getContent()%>
 					</li>
 				<%}%>
 			</ul>

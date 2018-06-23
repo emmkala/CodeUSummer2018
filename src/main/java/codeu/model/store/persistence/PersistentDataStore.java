@@ -16,7 +16,9 @@ package codeu.model.store.persistence;
 
 import codeu.model.data.Conversation;
 import codeu.model.data.Message;
+import codeu.model.data.ProfileImage;
 import codeu.model.data.User;
+import codeu.model.data.User.Sex;
 import codeu.model.store.persistence.PersistentDataStoreException;
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
@@ -54,7 +56,6 @@ public class PersistentDataStore {
 	 *     Datastore service
 	 */
 	public List<User> loadUsers() throws PersistentDataStoreException {
-
 		List<User> users = new ArrayList<>();
 
 		// Retrieve all users from the datastore.
@@ -67,13 +68,57 @@ public class PersistentDataStore {
 				String userName = (String) entity.getProperty("username");
 				String passwordHash = (String) entity.getProperty("password_hash");
 				Instant creationTime = Instant.parse((String) entity.getProperty("creation_time"));
-				Date birthday = (Date) entity.getProperty("birthday");
-				String description = (String) entity.getProperty("description");
-				//String occupationString = (String) entity.getProperty("occupation");
 				User user = new User(uuid, userName, passwordHash, creationTime);
-				user.setBirthday(birthday);
-				user.setDescription(description);
-				//user.setOccupation(user.parseStorableValue(occupationString));
+
+
+				//Newly implemented properties might not be set for old users, so you can only try to pull new values
+				try {
+					Date birthday = (Date) entity.getProperty("birthday");
+					user.setBirthday(birthday);
+				} catch(Exception e) {
+					//Do nothing
+				}
+				
+				try {
+					String description = (String) entity.getProperty("description");
+					user.setDescription(description);
+				} catch(Exception e) {
+					//Do nothing
+				}
+				
+				try {
+					String occupationString = (String) entity.getProperty("occupation");
+					user.setOccupation(user.parseOccupation(occupationString));
+				} catch(Exception e) {
+					//Do nothing
+				}
+				
+				try {
+					String sexString = (String) entity.getProperty("sex");
+					user.setSex(Sex.valueOf(sexString));
+				} catch(Exception e) {
+					//Do nothing
+				}
+				
+				try {
+					String email = (String) entity.getProperty("email");
+					user.setEmail(email);
+				} catch(Exception e) {
+					//Do nothing
+				}
+				
+				try {
+					String profileImageString = (String) entity.getProperty("profile_image");
+					if(profileImageString != null && !profileImageString.trim().equals("")) {
+						user.setProfileImage(new ProfileImage(profileImageString));
+					} else {
+						user.setProfileImage(ProfileImage.getDefaultImage(user.getSex()));
+					}
+				} catch(Exception e) {
+					//Do nothing
+				}
+				
+				
 				users.add(user);
 			} catch (Exception e) {
 				// In a production environment, errors should be very rare. Errors which may
@@ -164,7 +209,10 @@ public class PersistentDataStore {
 		userEntity.setProperty("creation_time", user.getCreationTime().toString());
 		userEntity.setProperty("birthday", user.getBirthday());
 		userEntity.setProperty("description", user.getDescription());
-		//userEntity.setProperty("occupation", user.getOccupation().storableValue());
+		userEntity.setProperty("sex", user.getSex().toString());
+		userEntity.setProperty("email", user.getEmail());
+		userEntity.setProperty("occupation", user.getOccupation().storableValue());
+		userEntity.setProperty("profile_image", user.getProfileImage().getURL());
 		datastore.put(userEntity);
 	}
 
