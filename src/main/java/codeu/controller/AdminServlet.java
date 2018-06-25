@@ -7,7 +7,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.*;
-import java.time.Instant;
 import codeu.model.data.Conversation;
 import codeu.model.data.User;
 import codeu.model.data.Message;
@@ -22,6 +21,7 @@ public class AdminServlet extends HttpServlet {
     private ConversationStore conversationStore;
     private MessageStore messageStore;
     private UserStore userStore;
+    private PersistentStorageAgent persistentStorage;
 
     @Override
     public void init() throws ServletException {
@@ -29,6 +29,7 @@ public class AdminServlet extends HttpServlet {
         setConversationStore(ConversationStore.getInstance());
         setMessageStore(MessageStore.getInstance());
         setUserStore(UserStore.getInstance());
+        setPersistentStore(PersistentStorageAgent.getInstance());
     }
 
     void setUserStore(UserStore userStore) {
@@ -40,6 +41,11 @@ public class AdminServlet extends HttpServlet {
     void setMessageStore(MessageStore messageStore) {
         this.messageStore = messageStore;
     }
+    
+    void setPersistentStore(PersistentStorageAgent persistentStorage) {
+        this.persistentStorage = persistentStorage;
+    }
+    
     void addToHashMap(HashMap<User, Integer> map, User key, int val){
         if (map.containsKey(key)){
             map.put(key, map.get(key) + val);
@@ -77,24 +83,31 @@ public class AdminServlet extends HttpServlet {
         request.setAttribute("numConvo", numConvo);
         request.setAttribute("numUser", numUser);
         request.setAttribute("numMessages", numMessages);
-        request.setAttribute("lastUser", userStore.lastUser().getName());
+        request.setAttribute("lastUser", "foo");
         request.setAttribute("mostActive", actUser.getName());
         request.setAttribute("wordiest", wordUser.getName());
         String username = (String) request.getSession().getAttribute("user");
         if (username == null){return;}
         User user = userStore.getUser(username);
-        if (user.checkAdmin()) {
-            request.getRequestDispatcher("/WEB-INF/view/admin.jsp").forward(request, response);
-            return;
+        
+        if(user != null) {
+        	request.setAttribute("isAdmin", user.checkAdmin());
+        } else {
+        	request.setAttribute("isAdmin", false);
         }
-
+        
+        request.getRequestDispatcher("/WEB-INF/view/admin.jsp").forward(request, response);
     }
 
     public void doPost(HttpServletRequest request, HttpServletResponse response)
             throws IOException, ServletException {
-
+    	if(request.getParameter("deleteEverthing") != null) {
+    		persistentStorage.clearData();
+    	}
+    	
         String username = (String) request.getSession().getAttribute("user");
         User user = userStore.getUser(username);
+                
         if (user.checkAdmin()) {
             response.sendRedirect("/admin");
             return;
