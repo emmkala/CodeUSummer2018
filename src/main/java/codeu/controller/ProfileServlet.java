@@ -48,6 +48,7 @@ public class ProfileServlet extends HttpServlet {
 	public void init() throws ServletException {
 		super.init();
 		userStore = UserStore.getInstance();
+		messageStore = messageStore.getInstance();
 		blobstoreService = BlobstoreServiceFactory.getBlobstoreService();
 		imagesService = ImagesServiceFactory.getImagesService();
 	}
@@ -145,14 +146,8 @@ public class ProfileServlet extends HttpServlet {
 		}
 
 		List<Message> allMessages = messageStore.getAllMessages();
-		
-		if(allMessages == null || allMessages.isEmpty()){
-				System.out.println("No messages");
-		} else {
-				for(Message mess : allMessages){
-					System.out.println("counting messages");
-				}
-		}
+
+		request.setAttribute("totalMessages", allMessages);
 
 		/*
 		Image displayedImage;

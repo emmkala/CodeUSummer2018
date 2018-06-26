@@ -56,12 +56,17 @@
 		<%}%>
 
 		<h2><%=user.getName()%>'s Posts</h2>
-
-		<%List<Message> allMessages = MessageStore.getAllMessages();%>
-		<% for(Message mess : allMessages){
-			System.out.println("counting messages");
-		} %>
-
+		<% List<Message> everyMessage = (List<Message>) request.getAttribute("totalMessages");
+		int p = 0;
+		for(Message mess : everyMessage){
+			if(mess.getAuthorId().equals(user.getId())){ %>
+				<p> <%= mess.getContent() %> </p>
+				<% p++ %>
+			<% } %>
+		<% } %>
+		<% if(p == 0){ %>
+			<p> You have not made any posts. Head to conversations to get started! </p>
+		<% } %>
 
 	<%} else {%>
 		<img src=<%=user.getProfileImage().getURL()%> height = "150" width = "200">
@@ -73,7 +78,17 @@
 		</form>
 
 		<h2>Your Posts</h2>
-
+		<% List<Message> everyMessage = (List<Message>) request.getAttribute("totalMessages");
+		int i = 0;
+		for(Message mess : everyMessage){
+			if(mess.getAuthorId().equals(user.getId())){ %>
+				<p> <%= mess.getContent() %> </p>
+				<% i++ %>
+			<% } %>
+		<% } %>
+		<% if(i == 0){ %>
+			<p> You have not made any posts. Head to conversations to get started! </p>
+		<% } %>
 		<hr/>
 
 		<form action="/user/<%=requestedProfile%>" method="POST">
