@@ -17,6 +17,8 @@ package codeu.model.store.persistence;
 import codeu.model.data.Conversation;
 import codeu.model.data.Message;
 import codeu.model.data.User;
+import codeu.model.data.Comment;
+import codeu.model.data.Post;
 import codeu.model.store.persistence.PersistentDataStore;
 import java.util.List;
 
@@ -103,4 +105,16 @@ public class PersistentStorageAgent {
   public void writeThrough(Message message) {
     persistentDataStore.writeThrough(message);
   }
+
+  public List<Post> loadPosts() throws PersistentDataStoreException {
+    return persistentDataStore.loadPosts();
+  }
+
+  public List<Comment> loadComments() throws PersistentDataStoreException {
+    return persistentDataStore.loadComments();
+  }
+
+  public void writeThrough(Post post) {persistentDataStore.writeThrough(post);}
+
+  public void writeThrough(Comment comment) {persistentDataStore.writeThrough(comment);}
 }

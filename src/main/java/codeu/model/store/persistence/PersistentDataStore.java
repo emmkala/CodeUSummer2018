@@ -17,6 +17,8 @@ package codeu.model.store.persistence;
 import codeu.model.data.Conversation;
 import codeu.model.data.Message;
 import codeu.model.data.User;
+import codeu.model.data.Post;
+import codeu.model.data.Comment;
 import codeu.model.store.persistence.PersistentDataStoreException;
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
@@ -170,6 +172,47 @@ public class PersistentDataStore {
     datastore.put(messageEntity);
   }
 
+    public List<Post> loadPosts() throws PersistentDataStoreException {
+        List<Post> posts = new ArrayList<>();
+        Query query = new Query("posts").addSort("creation_time", SortDirection.ASCENDING);
+        PreparedQuery results = datastore.prepare(query);
+        
+        for (Entity entity : results.asIterable()){
+            try{
+                UUID uuid = UUID.fromString((String) entity.getProperty("uuid"));
+                UUID ownerUuid = UUID.fromString((String) entity.getProperty("owner_uuid"));
+                Instant creationTime = Instant.parse((String) entity.getProperty("creation_time"));
+                String content = (String) entity.getProperty("content");
+                Post post = new Post(uuid, ownerUuid, creationTime, content);
+                posts.add(post);
+            } catch (Exception e){
+                throw new PersistentDataStoreException(e);
+            }
+        }
+        return posts;
+    }
+
+
+    public List<Comment> loadComments() throws PersistentDataStoreException {
+        List<Comment> comments = new ArrayList<>();
+        Query query = new Query("comments");
+        PreparedQuery results = datastore.prepare(query);
+
+        for (Entity entity : results.asIterable()) {
+            try {
+                UUID uuid = UUID.fromString((String) entity.getProperty("uuid"));
+                UUID postUuid = UUID.fromString((String) entity.getProperty("post_uuid"));
+                UUID parentUuid = UUID.fromString((String) entity.getProperty("parent_uuid"));
+                String content = (String) entity.getProperty("content");
+                Comment comment = new Comment(uuid, postUuid, parentUuid, content);
+                comments.add(comment);
+            } catch (Exception e){
+                throw new PersistentDataStoreException(e);
+            }
+        }
+        return comments;
+    }
+
   /** Write a Conversation object to the Datastore service. */
   public void writeThrough(Conversation conversation) {
     Entity conversationEntity = new Entity("chat-conversations", conversation.getId().toString());
@@ -178,6 +221,24 @@ public class PersistentDataStore {
     conversationEntity.setProperty("title", conversation.getTitle());
     conversationEntity.setProperty("creation_time", conversation.getCreationTime().toString());
     datastore.put(conversationEntity);
+  }
+
+  public void writeThrough(Post post){
+      Entity postEntity = new Entity("posts", post.getId().toString());
+      postEntity.setProperty("uuid", post.getId().toString());
+      postEntity.setProperty("owner_uuid", post.getOwnerId().toString());
+      postEntity.setProperty("creation_time", post.getCreationTime().toString());
+      postEntity.setProperty("content", post.getContent());
+      datastore.put(postEntity);
+  }
+
+  public void writeThrough(Comment comment){
+      Entity commentEntity = new Entity("comments", comment.getId().toString());
+      commentEntity.setProperty("uuid", comment.getId().toString());
+      commentEntity.setProperty("post_uuid", comment.getPostId().toString());
+      commentEntity.setProperty("parent_uuid", comment.getParentId().toString());
+      commentEntity.setProperty("content", comment.getContent());
+      datastore.put(commentEntity);
   }
 }
 
