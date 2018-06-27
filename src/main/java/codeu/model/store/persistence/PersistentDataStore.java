@@ -136,19 +136,61 @@ public class PersistentDataStore {
         UUID uuid = UUID.fromString((String) entity.getProperty("uuid"));
         UUID conversationUuid = UUID.fromString((String) entity.getProperty("conv_uuid"));
         UUID authorUuid = UUID.fromString((String) entity.getProperty("author_uuid"));
-        Instant creationTime = Instant.parse((String) entity.getProperty("creation_time"));
-        String content = (String) entity.getProperty("content");
-        Message message = new Message(uuid, conversationUuid, authorUuid, content, creationTime);
-        messages.add(message);
+          Instant creationTime = Instant.parse((String) entity.getProperty("creation_time"));
+          String content = (String) entity.getProperty("content");
+          Message message = new Message(uuid, conversationUuid, authorUuid, content, creationTime);
+          messages.add(message);
       } catch (Exception e) {
-        // In a production environment, errors should be very rare. Errors which may
-        // occur include network errors, Datastore service errors, authorization errors,
-        // database entity definition mismatches, or service mismatches.
-        throw new PersistentDataStoreException(e);
+          // In a production environment, errors should be very rare. Errors which may
+          // occur include network errors, Datastore service errors, authorization errors,
+          // database entity definition mismatches, or service mismatches.
+          throw new PersistentDataStoreException(e);
       }
     }
 
-    return messages;
+      return messages;
+  }
+
+  public List<Post> loadPosts() throws PersistentDataStoreException {
+        List<Post> posts = new ArrayList<>();
+        Query query = new Query("posts").addSort("creation_time", SortDirection.ASCENDING);
+        PreparedQuery results = datastore.prepare(query);
+
+        for (Entity entity : results.asIterable()) {
+            try {
+                UUID uuid = UUID.fromString((String) entity.getProperty("uuid"));
+                UUID ownerUuid = UUID.fromString((String) entity.getProperty("owner_uuid"));
+                Instant creationTime = Instant.parse((String) entity.getProperty("creation_time"));
+                String content = (String) entity.getProperty("content");
+                Post post = new Post(uuid, ownerUuid, creationTime, content);
+                posts.add(post);
+            } catch (Exception e) {
+                throw new PersistentDataStoreException(e);
+            }
+        }
+        return posts;
+  }
+
+  public List<Comment> loadComments() throws PersistentDataStoreException {
+        List<Comment> comments = new ArrayList<>();
+        Query query = new Query("comments");
+        PreparedQuery results = datastore.prepare(query);
+
+        for (Entity entity : results.asIterable()) {
+            try {
+                UUID uuid = UUID.fromString((String) entity.getProperty("uuid"));
+                UUID ownerUuid = UUID.fromString((String) entity.getProperty("owner_uuid"));
+                Instant creationTime = Instant.parse((String) entity.getProperty("creation_time"));
+                UUID postUuid = UUID.fromString((String) entity.getProperty("post_uuid"));
+                UUID parentUuid = UUID.fromString((String) entity.getProperty("parent_uuid"));
+                String content = (String) entity.getProperty("content");
+                Comment comment = new Comment(uuid, ownerUuid, creationTime, postUuid, parentUuid, content);
+                comments.add(comment);
+            } catch (Exception e) {
+                throw new PersistentDataStoreException(e);
+            }
+        }
+        return comments;
   }
 
   /** Write a User object to the Datastore service. */
@@ -172,47 +214,6 @@ public class PersistentDataStore {
     datastore.put(messageEntity);
   }
 
-    public List<Post> loadPosts() throws PersistentDataStoreException {
-        List<Post> posts = new ArrayList<>();
-        Query query = new Query("posts").addSort("creation_time", SortDirection.ASCENDING);
-        PreparedQuery results = datastore.prepare(query);
-        
-        for (Entity entity : results.asIterable()){
-            try{
-                UUID uuid = UUID.fromString((String) entity.getProperty("uuid"));
-                UUID ownerUuid = UUID.fromString((String) entity.getProperty("owner_uuid"));
-                Instant creationTime = Instant.parse((String) entity.getProperty("creation_time"));
-                String content = (String) entity.getProperty("content");
-                Post post = new Post(uuid, ownerUuid, creationTime, content);
-                posts.add(post);
-            } catch (Exception e){
-                throw new PersistentDataStoreException(e);
-            }
-        }
-        return posts;
-    }
-
-
-    public List<Comment> loadComments() throws PersistentDataStoreException {
-        List<Comment> comments = new ArrayList<>();
-        Query query = new Query("comments");
-        PreparedQuery results = datastore.prepare(query);
-
-        for (Entity entity : results.asIterable()) {
-            try {
-                UUID uuid = UUID.fromString((String) entity.getProperty("uuid"));
-                UUID postUuid = UUID.fromString((String) entity.getProperty("post_uuid"));
-                UUID parentUuid = UUID.fromString((String) entity.getProperty("parent_uuid"));
-                String content = (String) entity.getProperty("content");
-                Comment comment = new Comment(uuid, postUuid, parentUuid, content);
-                comments.add(comment);
-            } catch (Exception e){
-                throw new PersistentDataStoreException(e);
-            }
-        }
-        return comments;
-    }
-
   /** Write a Conversation object to the Datastore service. */
   public void writeThrough(Conversation conversation) {
     Entity conversationEntity = new Entity("chat-conversations", conversation.getId().toString());
@@ -235,6 +236,8 @@ public class PersistentDataStore {
   public void writeThrough(Comment comment){
       Entity commentEntity = new Entity("comments", comment.getId().toString());
       commentEntity.setProperty("uuid", comment.getId().toString());
+      commentEntity.setProperty("owner_uuid", comment.getOwnerId().toString());
+      commentEntity.setProperty("creation_time", comment.getCreationTime().toString());
       commentEntity.setProperty("post_uuid", comment.getPostId().toString());
       commentEntity.setProperty("parent_uuid", comment.getParentId().toString());
       commentEntity.setProperty("content", comment.getContent());
