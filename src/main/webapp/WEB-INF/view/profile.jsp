@@ -61,6 +61,7 @@
 		for(Message mess : everyMessage){
 			if(mess.getAuthorId().equals(user.getId())){ %>
 				<p> <%= mess.getContent() %> </p>
+				<form action="/user/<%= user.getName() %>">
 				<input type="text" name="comment" placeholder="Comment on this post!"> <br />
 				<button type="submit">Send</button>
 				<% p++; %>
