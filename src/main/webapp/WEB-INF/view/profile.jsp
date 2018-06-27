@@ -61,7 +61,9 @@
 		for(Message mess : everyMessage){
 			if(mess.getAuthorId().equals(user.getId())){ %>
 				<p> <%= mess.getContent() %> </p>
-				<% p++ %>
+				<input type="text" name="comment" placeholder="Comment on this post!"> <br />
+				<button type="submit">Send</button>
+				<% p++; %>
 			<% } %>
 		<% } %>
 		<% if(p == 0){ %>
@@ -83,7 +85,7 @@
 		for(Message mess : everyMessage){
 			if(mess.getAuthorId().equals(user.getId())){ %>
 				<p> <%= mess.getContent() %> </p>
-				<% i++ %>
+				<% i++; %>
 			<% } %>
 		<% } %>
 		<% if(i == 0){ %>
