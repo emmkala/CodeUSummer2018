@@ -148,16 +148,11 @@ public class ChatServlet extends HttpServlet {
     // this removes any HTML from the message content
     String cleanedMessageContent = Jsoup.clean(messageContent, Whitelist.none());
 
-    /* these couple of lines only do bold, italics and underlines, and can definetely be condensed
-       to allow less repitition, they also can be more error proof and allow for words at the end
-       of a sentence. I will coqntinue to add more functionality to it, but this is the MVP at the
-       moment :) */
-
     if(cleanedMessageContent.contains("**")){
       cleanedMessageContent = stylizedText('*','*','b',cleanedMessageContent);
-    } if(messageContent.contains("/*")){
+    } if(cleanedMessageContent.contains("/*")){
       cleanedMessageContent = stylizedText('/','*','i',cleanedMessageContent);
-    } if(messageContent.contains("//")){
+    } if(cleanedMessageContent.contains("//")){
       cleanedMessageContent = stylizedText('/','/','u',cleanedMessageContent);
     }
 
