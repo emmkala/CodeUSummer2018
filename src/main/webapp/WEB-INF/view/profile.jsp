@@ -61,8 +61,8 @@
 		for(Message mess : everyMessage){
 			if(mess.getAuthorId().equals(user.getId())){ %>
 				<p> <%= mess.getContent() %> </p>
-				<form action="/user/<%= user.getName() %>">
-				<input type="text" name="comment" placeholder="Comment on this post!"> <br />
+				<form action="/chat/<%= user.getName() %>"> // this will send it to the conversation this is from
+				<input type="text" name="comment" placeholder="Reply To This Post!"> <br />
 				<button type="submit">Send</button>
 				<% p++; %>
 			<% } %>
@@ -72,7 +72,23 @@
 		<% } %>
 
 		<h2><%=user.getName()%>'s Post's<h2>
-		
+		<% List<Post> everyPost = (List<Post>) request.getAttribute("usersPosts");
+		// List<Comment> everyComment = (List<Post>) request.getAttribute("postComments");
+		if(everyPost != null){
+			for(Post post : everyPost){ %>
+				<p> <%=post.getContent()%> </p>
+				<!-- <%if(everyComment != null){
+				 	for(Comment comment : everyComment){ %>
+						<p> <%=comment.getContent()%> </p>
+					<% } %>
+				<% } %> -->
+				<form action="/chat/<%= user.getName() %>"> // this will send it to the conversation this is from
+				<input type="text" name="comment" placeholder="Comment on Your Post!"> <br />
+				<button type="submit">Send</button>
+			<% } %>
+		<% } else { %>
+		 	<p> You haven't made any posts. </p>
+		<% } %> 
 
 	<%} else {%>
 		<img src=<%=user.getProfileImage().getURL()%> height = "150" width = "200">
@@ -84,9 +100,29 @@
 		</form>
 
 		<h2> Make a Post! </h2>
-		<form action="/user/<%= user.getName() %>">
+		<form action="/user/<%= user.getName() %>"> // this is where it will use a method to post the comment
 		<input type="text" name="post" placeholder="Post about any topic you want!">
 		<button type="submit">Send</button>
+
+		<h2> Your Posts </h2>
+		<% List<Post> everyPost = (List<Post>) request.getAttribute("usersPosts");
+		// List<Comment> everyComment = (List<Post>) request.getAttribute("postComments");
+		if(everyPost != null){
+			for(Post post : everyPost){ %>
+				<p> <%=post.getContent()%> </p>
+				<!-- <%if(everyComment != null){
+				 	for(Comment comment : everyComment){ %>
+						<p> <%=comment.getContent()%> </p>
+					<% } %>
+				<% } %> -->
+				<form action="/chat/<%= user.getName() %>"> // this will send it to the conversation this is from
+				<input type="text" name="comment" placeholder="Comment on Your Post!"> <br />
+				<button type="submit">Send</button>
+			<% } %>
+		<% } else { %>
+		 	<p> You haven't made any posts. </p>
+		<% } %>
+
 
 		<h2>Your Messages</h2>
 		<% List<Message> everyMessage = (List<Message>) request.getAttribute("totalMessages");

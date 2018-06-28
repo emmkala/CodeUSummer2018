@@ -5,14 +5,16 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.*;
-import codeu.model.data.Conversation;
+import java.time.Instant;
+import java.util.List;
+import java.util.UUID;
 import codeu.model.data.User;
-import codeu.model.data.Message;
-import codeu.model.store.basic.ConversationStore;
+import codeu.model.data.Post;
 import codeu.model.store.basic.UserStore;
-import codeu.model.store.basic.MessageStore;
+import codeu.model.store.basic.PostStore;
 import codeu.model.store.persistence.PersistentStorageAgent;
+import org.jsoup.Jsoup;
+import org.jsoup.safety.Whitelist;
 
 public class PostServlet extends HttpServlet{
     private UserStore userStore;
@@ -33,7 +35,42 @@ public class PostServlet extends HttpServlet{
         this.postStore = postStore;
     }
 
+    @Override
+    public void doGet(HttpServletRequest request, HttpServletResponse response)
+        throws IOException, ServletException {
 
+      String usersProfile = getNameFromURL(request.getRequestURL());
+  		User currentUser = userStore.getUser(profileEditName);
+      UUID currentUserID = currentUser.getId();
+
+      List<Post> allUsersPosts = postStore.getPostsByUserID(currentUserID);
+      request.setAttribute("usersPosts", allUsersPosts);
+
+      request.getRequestDispatcher("/WEB-INF/view/profile.jsp").forward(request, response);
+
+      }
+
+    public void doPost(HttpServletRequest request, HttpServletResponse response)
+          throws IOException, ServletException {
+
+
+      String postContent = request.getParameter("post");
+      // this removes any HTML from the message content
+      String cleanedPostContent = Jsoup.clean(postContent, Whitelist.none());
+
+      Post post =
+          new Post(
+              UUID.randomUUID(),
+              currentUserID,
+              Instant.now();
+              cleanedPostContent,
+          )
+
+      PostStore.addPost(post);
+      // redirect to a GET request
+      response.sendRedirect("/user/" + usersProfile);
+
+      }
 
 
 

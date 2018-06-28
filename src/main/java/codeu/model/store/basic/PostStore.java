@@ -43,5 +43,15 @@ public class PostStore{
         persistentStorageAgent.writeThrough(post);
     }
 
+    public List<Post> getPostsByUserID(UUID userID) {
+
+      List<Post> userPosts = new ArrayList<>();
+
+      for (Post post : postList) {
+        if (post.getOwnerId().equals(userID)) {
+          userPosts.add(post);
+        }
+      }
+      return userPosts;
 
 }
