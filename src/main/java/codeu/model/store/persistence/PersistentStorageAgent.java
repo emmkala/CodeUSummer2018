@@ -32,87 +32,6 @@ import java.util.List;
  */
 public class PersistentStorageAgent {
 
-<<<<<<< HEAD
-	private static PersistentStorageAgent instance;
-
-	private final PersistentDataStore persistentDataStore;
-
-	/**
-	 * Access the persistent storage agent, in order to perform object-level loads and/or stores. Do
-	 * not call this function from a test; use getTestInstance() instead.
-	 */
-	public static PersistentStorageAgent getInstance() {
-		if (instance == null) {
-			instance = new PersistentStorageAgent(new PersistentDataStore());
-		}
-		return instance;
-	}
-
-	/**
-	 * Instance getter function used for testing. Supply a mock for PersistentDataStore.
-	 *
-	 * @param mockPersistentDataStore a mock used for testing
-	 */
-	static PersistentStorageAgent getTestInstance(PersistentDataStore mockPersistentDataStore) {
-		return new PersistentStorageAgent(mockPersistentDataStore);
-	}
-
-	// Private constructor, accessible only through singleton interface
-	private PersistentStorageAgent(PersistentDataStore persistentDataStore) {
-		this.persistentDataStore = persistentDataStore;
-	}
-
-	/**
-	 * Retrieve all User objects from the Datastore service. The returned list may be empty.
-	 *
-	 * @throws PersistentDataStoreException if an error was detected during the load from the
-	 *     Datastore service
-	 */
-	public List<User> loadUsers() throws PersistentDataStoreException {
-		return persistentDataStore.loadUsers();
-	}
-
-	/**
-	 * Retrieve all Conversation objects from the Datastore service. The returned list may be empty.
-	 *
-	 * @throws PersistentDataStoreException if an error was detected during the load from the
-	 *     Datastore service
-	 */
-	public List<Conversation> loadConversations() throws PersistentDataStoreException {
-		return persistentDataStore.loadConversations();
-	}
-
-	/**
-	 * Retrieve all Message objects from the Datastore service. The returned list may be empty.
-	 *
-	 * @throws PersistentDataStoreException if an error was detected during the load from the
-	 *     Datastore service
-	 */
-	public List<Message> loadMessages() throws PersistentDataStoreException {
-		return persistentDataStore.loadMessages();
-	}
-
-	/** Write a User object to the Datastore service. */
-	public void writeThrough(User user) {
-		persistentDataStore.writeThrough(user);
-	}
-
-	/** Write a Message object to the Datastore service. */
-	public void writeThrough(Conversation conversation) {
-		persistentDataStore.writeThrough(conversation);
-	}
-
-	/** Write a Conversation object to the Datastore service. */
-	public void writeThrough(Message message) {
-		persistentDataStore.writeThrough(message);
-	}
-
-	public void clearData() {
-		persistentDataStore.clearData();
-	}
-
-
-=======
   private static PersistentStorageAgent instance;
 
   private final PersistentDataStore persistentDataStore;
@@ -198,5 +117,5 @@ public class PersistentStorageAgent {
   public void writeThrough(Post post) {persistentDataStore.writeThrough(post);}
 
   public void writeThrough(Comment comment) {persistentDataStore.writeThrough(comment);}
->>>>>>> c5440714179df974550d385c2a8f0342513e5ff7
+
 }

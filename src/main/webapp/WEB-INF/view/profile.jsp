@@ -68,8 +68,11 @@
 			<% } %>
 		<% } %>
 		<% if(p == 0){ %>
-			<p> You have not made any posts. Head to conversations to get started! </p>
+			<p> <%=user.getName()%> has not contributed to any conversations. </p>
 		<% } %>
+
+		<h2><%=user.getName()%>'s Post's<h2>
+		
 
 	<%} else {%>
 		<img src=<%=user.getProfileImage().getURL()%> height = "150" width = "200">
