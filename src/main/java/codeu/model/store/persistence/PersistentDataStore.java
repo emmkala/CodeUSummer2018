@@ -26,6 +26,8 @@ import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.datastore.Query.SortDirection;
+
+import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Date;
@@ -73,7 +75,8 @@ public class PersistentDataStore {
 
 				//Newly implemented properties might not be set for old users, so you can only try to pull new values
 				try {
-					Date birthday = (Date) entity.getProperty("birthday");
+					SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+					Date birthday = sdf.parse((String) entity.getProperty("birthday"));
 					user.setBirthday(birthday);
 				} catch(Exception e) {
 					//Do nothing
@@ -207,7 +210,7 @@ public class PersistentDataStore {
 		userEntity.setProperty("username", user.getName());
 		userEntity.setProperty("password_hash", user.getPasswordHash());
 		userEntity.setProperty("creation_time", user.getCreationTime().toString());
-		userEntity.setProperty("birthday", user.getBirthday());
+		userEntity.setProperty("birthday", user.getBirthday(new SimpleDateFormat("yyyy-MM-dd")));
 		userEntity.setProperty("description", user.getDescription());
 		userEntity.setProperty("sex", user.getSex().toString());
 		userEntity.setProperty("email", user.getEmail());

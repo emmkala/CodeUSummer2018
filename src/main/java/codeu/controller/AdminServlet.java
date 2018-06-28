@@ -83,18 +83,14 @@ public class AdminServlet extends HttpServlet {
         request.setAttribute("numConvo", numConvo);
         request.setAttribute("numUser", numUser);
         request.setAttribute("numMessages", numMessages);
-        request.setAttribute("lastUser", "foo");
+        request.setAttribute("lastUser", userStore.lastUser().getName());
         request.setAttribute("mostActive", actUser.getName());
         request.setAttribute("wordiest", wordUser.getName());
         String username = (String) request.getSession().getAttribute("user");
         if (username == null){return;}
         User user = userStore.getUser(username);
         
-        if(user != null) {
-        	request.setAttribute("isAdmin", user.checkAdmin());
-        } else {
-        	request.setAttribute("isAdmin", false);
-        }
+        request.setAttribute("isAdmin", user != null ? user.checkAdmin() : false);
         
         request.getRequestDispatcher("/WEB-INF/view/admin.jsp").forward(request, response);
     }

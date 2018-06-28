@@ -30,9 +30,6 @@ public class ProfileImage {
 	}
 	
 	public static ProfileImage getDefaultImage(Sex sex) {
-		if(sex == Sex.FEMALE) {
-			return defaultFemale;
-		}
-		return defaultMale;
+		return sex == Sex.FEMALE ? defaultFemale : defaultMale;
 	}
 }
