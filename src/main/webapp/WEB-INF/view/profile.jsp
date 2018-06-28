@@ -55,7 +55,7 @@
 			<p>Birthday not set</p>
 		<%}%>
 
-		<h2><%=user.getName()%>'s Posts</h2>
+		<h2><%=user.getName()%>'s Messages</h2>
 		<% List<Message> everyMessage = (List<Message>) request.getAttribute("totalMessages");
 		int p = 0;
 		for(Message mess : everyMessage){
@@ -80,7 +80,12 @@
 			<input type="submit" value="Upload Image">
 		</form>
 
-		<h2>Your Posts</h2>
+		<h2> Make a Post! </h2>
+		<form action="/user/<%= user.getName() %>">
+		<input type="text" name="post" placeholder="Post about any topic you want!">
+		<button type="submit">Send</button>
+
+		<h2>Your Messages</h2>
 		<% List<Message> everyMessage = (List<Message>) request.getAttribute("totalMessages");
 		int i = 0;
 		for(Message mess : everyMessage){
