@@ -146,7 +146,6 @@ public class ProfileServlet extends HttpServlet {
 		}
 
 		List<Message> allMessages = messageStore.getAllMessages();
-
 		request.setAttribute("totalMessages", allMessages);
 
 		/*
