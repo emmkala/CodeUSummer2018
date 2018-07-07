@@ -92,8 +92,7 @@ public class UserStore {
     }
     return null;
   }
-  public User lastUser() {return users.get(users.size()-1);}
-
+  
   /**
    * Add a new user to the current set of users known to the application. This should only be called
    * to add a new user, not to update an existing user.
@@ -129,4 +128,6 @@ public class UserStore {
   }
 
   public int numUsers() {return users.size();}
+
+  public User lastUser() {return users.get(users.size()-1);}
 }

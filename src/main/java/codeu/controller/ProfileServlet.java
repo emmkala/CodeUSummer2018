@@ -32,25 +32,31 @@ import codeu.model.data.User.Sex;
 import codeu.model.data.User;
 import codeu.model.data.User.Occupation;
 import codeu.model.store.basic.UserStore;
+import codeu.model.store.basic.MessageStore;
+import codeu.model.data.Message;
+
+import java.util.*;
 
 public class ProfileServlet extends HttpServlet {
 	private UserStore userStore;
-	
+	private MessageStore messageStore;
+
 	BlobstoreService blobstoreService;
 	ImagesService imagesService;
-	
+
 	@Override
 	public void init() throws ServletException {
 		super.init();
 		userStore = UserStore.getInstance();
+		messageStore = messageStore.getInstance();
 		blobstoreService = BlobstoreServiceFactory.getBlobstoreService();
 		imagesService = ImagesServiceFactory.getImagesService();
 	}
 
 	@Override
-	public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException{
+	public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
 		String profileEditName = getNameFromURL(request.getRequestURL());
-		
+
 		User user = userStore.getUser(profileEditName);
 		UserStore userStore = UserStore.getInstance();
 
@@ -60,26 +66,26 @@ public class ProfileServlet extends HttpServlet {
 				user.setBirthday(newBirthday);
 			}
 		} catch(NullPointerException e) {
-			//Do nothing
-		}		
-		
+			System.out.println("Didn't set birthday");
+		}
+
 		try {
 			String newDescription = request.getParameter("updated description");
 			
-			if(newDescription.trim().equals("")) {
+			if(!newDescription.trim().equals("")) {
 				user.setDescription(newDescription);
 			}
 		} catch(NullPointerException e) {
 			//Do nothing
 		}
-		
+
 		try {
 			String newSex = request.getParameter("updated sex");
 			user.setSex(Sex.valueOf(newSex));
 		} catch(NullPointerException e) {
 			//Do nothing
 		}
-		
+
 		try {
 			String newEmail = request.getParameter("updated email");
 			if(!newEmail.trim().equals("")) {
@@ -89,68 +95,110 @@ public class ProfileServlet extends HttpServlet {
 			//Do nothing
 		}
 		
+		try {
+			String workStatus = request.getParameter("updated work status");
+			if (workStatus != "default") {
+				if(workStatus.equals("employed")) {
+					String employer = request.getParameter("updated employer");
+					String position = request.getParameter("updated position");
+					if(employer != null && position != null &
+							!employer.trim().equals("") && !position.trim().equals("")) {
+						user.setOccupation(user.new Occupation(employer, position));
+					}
+				} else if (workStatus.equals("student")) {
+					String school = request.getParameter("updated school");
+					int year = Integer.parseInt(request.getParameter("updated school year"));
+					if(school != null && !school.trim().equals("") && year != 0) {	
+						user.setOccupation(user.new Occupation(school, year));
+					}
+				} else  {
+					user.setOccupation(user.new Occupation());
+				}
+			} 
+		} catch(NullPointerException e) {
+			System.out.println("Didn't set occupation");
+		}
+
+
 		String workStatus = request.getParameter("updated work status");
-		System.out.println(workStatus);
-		if(workStatus != "default") {
+		if (workStatus != null) {
+			Occupation occupation = null;
 			if(workStatus.equals("employed")) {
 				String employer = request.getParameter("updated employer");
 				String position = request.getParameter("updated position");
-				if(employer != null && position != null &
-						!employer.trim().equals("") && !position.trim().equals("")) {
-					user.setOccupation(user.new Occupation(employer, position));
-				}
+				occupation = user.new Occupation(employer, position);
 			} else if (workStatus.equals("student")){
 				String school = request.getParameter("updated school");
 				int year = Integer.parseInt(request.getParameter("updated school year"));
-				if(school != null && !school.trim().equals("") && year != 0) {	
-					user.setOccupation(user.new Occupation(school, year));
-				}
-			} else  {
-				user.setOccupation(user.new Occupation());
+				occupation = user.new Occupation(school, year);
+			} else if (workStatus.equals("unemployed")) {
+				occupation = user.new Occupation();
+			} else {
+				System.out.println("Unrecongized work status");
 			}
+			user.setOccupation(occupation);
 		}
-		
+
 		userStore.updateUser(user);
-		
-		doGet(request,response);
+
+		doGet(request, response);
 	}
-	
+
 	@Override
 	public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
 		String profileRequestName = getNameFromURL(request.getRequestURL());
+
+		if (!userStore.isUserRegistered(profileRequestName)) {
+			response.sendRedirect("../404.html");
+			return;
+		}
+
+		List<Message> allMessages = messageStore.getAllMessages();
+
+		request.setAttribute("totalMessages", allMessages);
+
+		/*
+		Image displayedImage;
+		if(user.getProfileImage() == null) {
+			displayedImage = defaultImage;
+		} else {
+			displayedImage = user.getProfileImage();
+		}
+
+		request.setAttribute("image", displayedImage);
+		*/
 		
 		if (!userStore.isUserRegistered(profileRequestName)) {
 			response.sendRedirect("../404.html");
 			return;
 		}
-		
-		request.setAttribute("blobstoreService", blobstoreService);
-		
+				request.setAttribute("blobstoreService", blobstoreService);
+
 		request.setAttribute("requestedProfile", profileRequestName);
-	  	
+
 		if(request.getSession().getAttribute("user") != null) {
 		  	String loggedInUserName = (String) request.getSession().getAttribute("user");
 		  	request.setAttribute("canEdit", loggedInUserName.equals(profileRequestName));
 		} else {
 		  	request.setAttribute("canEdit", false);
 		}
-		
+
 		request.getRequestDispatcher("/WEB-INF/view/profile.jsp").forward(request, response);
 	}
-	
+
 	private Date parseDate(String in) {
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 		Date out;
-		
+
 		try {
 			out = sdf.parse(in);
 		} catch (Exception e) {
 			out = null;
 		}
-		
+
 		return out;
 	}
-	
+
 	private String getNameFromURL(StringBuffer URL) {
 		String URL_String = URL.toString();
 		int usernameStartIndex = URL_String.indexOf("/user/");

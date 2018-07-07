@@ -61,7 +61,60 @@ List<Message> messages = (List<Message>) request.getAttribute("messages");
 		</h1>
 
 		<hr/>
+		<!--
+					IN PROGRESS WORK ON POP MENU
 
+					HTML:
+					<div class="author">
+					  David Lawson
+					  <div class="popup">
+					    <img class="image" src="https://yogifil.la/200/200">
+					    <h3 class="name"> David Lawson </h3>
+					    <p class="description">Baseball player for Atlanta Braves</p>
+					    <p class="email">dLawson@gmail.com</p>
+					  </div>
+					</div>
+
+					CSS:
+					.popup {
+					  position: absolute;
+					  background-color: black;
+					  left: 100px;
+					  display: none;
+					}
+
+					.image {
+					  height: 100px;
+					  width: 100px;
+					}
+
+					.name {
+					  position: absolute;
+					  bottom: 65px;
+					  left: 105px;
+					  white-space: nowrap;
+					}
+
+					.description {
+					  position: absolute;
+					  font-size: 12px;
+					  bottom: 50px;
+					  left: 105px;
+					  white-space: nowrap;
+					}
+
+					.email {
+					  position: absolute;
+					  font-size: 12px;
+					  bottom: 30px;
+					  left: 105px;
+					  white-space: nowrap;
+					}
+
+					.author:hover .popup {
+					  display: block;
+					}
+		-->
 		<div id="chat">
 			<ul>
 				<%
