@@ -1,0 +1,69 @@
+.popup {
+  position: absolute;
+  background: radial-gradient(circle, #ccf5ff 50%, #99ebff);
+  border-style: solid;
+  border-width: 2px;
+  border-color: #b3f0ff;
+  border-radius: 15px;
+  right: 80%;
+  display: none;
+  height: 70px;
+  width: 18%;
+}
+
+.popup-text{
+  color:#3f3f5a;
+  position: absolute;
+  top: 125px;
+  right: 270px;
+}
+
+.popup-image {
+  position: absolute;
+  border-style: solid;
+  border-color: #80e5ff;
+  border-width: 2px;
+  border-radius: 15px;
+  left: 6px;
+  top: 3px;
+  height: 60px;
+  width: 60px;
+}
+
+.popup-name {
+  position: absolute;
+  bottom: 72px;
+  left: 125px;
+  white-space: nowrap;
+}
+
+.popup-occupation {
+  position: absolute;
+  font-size: 12px;
+  bottom: 65px;
+  left: 125px;
+  white-space: nowrap;
+}
+
+.popup-email {
+  position: absolute;
+  font-size: 12px;
+  bottom: 45px;
+  left: 125px;
+  white-space: nowrap;
+}
+
+.author:hover .popup {
+  display: block;
+}
+
+a {
+  text-decoration:none;
+  color:black;
+}
+
+#chat {
+	background-color: white;
+	height: 500px;
+	overflow-y: scroll
+}

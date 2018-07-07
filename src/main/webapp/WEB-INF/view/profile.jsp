@@ -102,6 +102,9 @@
 				value="<%=user.getDescription()%>" width="300" height="200">
 
 			<br>
+			<input name="updated description" type="text" value="<%=user.getDescription()%>">
+	
+			<br> 
 			<br>
 
 			<h2>Edit Birthday</h2>
@@ -125,12 +128,10 @@
 			<br>
 			<br>
 
-			<h2>Work Status:</h2>
-			<select name="updated work status" id="workStatus" onchange="updateFields()">
-				<option value="employed">Employed</option>
-				<option value="unemployed">Unemployed</option>
+			<p>Email:</p>
+			<input name="updated email" type="text" value="<%=user.getEmail()%>">
 
-				<option value="student">Student</option>
+			<option value="student">Student</option>
 
 			</select>
 
@@ -166,7 +167,7 @@
 	              var schoolYearField = document.getElementById("schoolYearField");
 	              var employerField = document.getElementById("employerField");
 	              var positionField = document.getElementById("positionField");
-
+	              
 	              if(workStatus.value == "employed"){
 	              	  schoolField.style.display = "none";
 	                  schoolYearField.style.display = "none";
@@ -180,7 +181,7 @@
 	                  employerField.style.display = "none";
 	                  positionField.style.display = "none";
 	              }
-	              if(workStatus.value == "unemployed"){
+	              if(workStatus.value == "unemployed" || workStatus.value == "default"){
 	                  schoolField.style.display = "none";
 	                  schoolYearField.style.Display = "none";
 	                  employerField.style.display = "none";
@@ -188,8 +189,73 @@
 	              }
 	            }
 	            updateFields();
-	     	</script>
 
+	        	
+
+				function removeDefault(elem) {
+					var options = elem.childNodes;
+					for (i = 0; i < options.length; i++) {
+						if (options[i].value == "default") {
+							options[i].style = "display:none";
+							break;
+						}
+					}
+				}
+				
+				//This doesn't work
+				/*
+				function setStoredWorkStatus(){
+					var workStatus = document.getElementById("workStatus");
+					var currentWorkStatus = "<%=user.getOccupation().getOccupationType()%>".toLowerCase();
+					for(i = 0; i < workStatus.childNodes; i++){
+						if(workStatus.childNodes[i] == currentWorkStatus){
+							workStatus.childNodes[i].selected = "selected";
+						}
+					}
+				}
+				
+				<%if(user.getOccupation() != null) {%>
+					setStoredWorkStatus();
+				<%}%>
+				*/
+				updateFields();
+			</script>
+
+			<h2>Work Status:</h2>
+			<select name="updated work status" id="workStatus" onchange="updateFields(); removeDefault(this);">
+				<option disabled selected value="default"> -- select an option -- </option>
+				<option value="employed">Employed</option>
+				<option value="unemployed">Unemployed</option>
+				<option value="student">Student</option>
+			</select>
+	        
+	        <div id="schoolField" style="display:none">
+	        	<h3>High School/University</h3>
+	        	<input name="updated school name" type="text" name="school">
+			</div>
+	        
+	        <div id="schoolYearField" style="display:none">
+	        	<h3>Year</h3>
+	        	<select name="updated school year" onchange="updateFields(); removeDefault(this)">
+	        		<option disabled selected value="default"> -- select an option -- </option>
+	        	    <option style="display:none;" disabled selected value="0"> -- select an option -- </option>
+	            	<option value=1>Freshman</option>
+	                <option value=2>Sophmore</option>
+	        		<option value=3>Junior</option>
+	                <option value=4>Senior</option>
+	             </select>
+	        </div>
+	        
+	        <div id="employerField" style="display:none">
+	        	<h3>Employer</h3>
+	        	<input name="updated employer" type="text" name="employer">
+			</div>
+	           
+	        <div id="positionField" style="display:none">
+	        	<h3>Position</h3>
+	        	<input name="updated position" type="text" name="position">
+			</div>
+			
 			<br>
 			<br>
 

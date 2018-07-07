@@ -42,6 +42,7 @@ public class User {
 	private Occupation occupation;
 	private ProfileImage profileImage;
 	private Sex sex;
+	private String email;
 
 	/**
 	 * Constructs a new User.
@@ -58,8 +59,6 @@ public class User {
 		this.passwordHash = passwordHash;
 		this.creation = creation;
 		this.setSex(Sex.UNKOWN);
-		this.profileImage = ProfileImage.getDefaultImage(sex);
-		setDescription("");
 	}
 
 	/** Returns the ID of this User. */
@@ -100,6 +99,9 @@ public class User {
 	}
 
 	public String getDescription() {
+		if(description == null) {
+			return "Description not set";
+		}
 		return description;
 	}
 
@@ -108,6 +110,9 @@ public class User {
 	}
 
 	public Occupation getOccupation() {
+		if(occupation == null) {
+			return new Occupation();
+		}
 		return occupation;
 	}
 
@@ -146,6 +151,9 @@ public class User {
 	}
 	
 	public ProfileImage getProfileImage() {
+		if(profileImage == null) {
+			return ProfileImage.getDefaultImage(sex);
+		}
 		return profileImage;
 	}
 
@@ -159,9 +167,21 @@ public class User {
 
 	public void setSex(Sex sex) {
 		this.sex = sex;
-		setProfileImage(ProfileImage.getDefaultImage(sex));
 	}
 
+	public String getEmail() {
+		if(email == null) {
+			return "Email not set";
+		}
+		return email;
+	}
+
+	public void setEmail(String email) {
+		this.email = email;
+	}
+
+	
+	//Inner class
 	public class Occupation {
 		private OccupationType occupationType;
 		private int schoolYear;
@@ -185,17 +205,17 @@ public class User {
 			this.occupationType = OccupationType.UNEMPLOYED;
 		}
 		
-		public OccupationType getOccupationType() {
-			return occupationType;
+		public String getOccupationType() {
+			return occupationType.toString();
 		}
 		
-		public String getDescriptor() {
+		public String toString() {
 			if(occupationType == OccupationType.STUDENT) {
 				return yearName(schoolYear) + " at " + school;
 			} else if(occupationType == OccupationType.EMPLOYED) {
 				return position + " at " + employer;
 			}
-			return "unemployed";
+			return "Unemployed";
 		}
 		
 		private String yearName(int year) {
