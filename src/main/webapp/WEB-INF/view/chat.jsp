@@ -71,8 +71,6 @@ List<Message> messages = (List<Message>) request.getAttribute("messages");
 				  User author = UserStore.getInstance().getUser(authorName);
 				%>
 					<li>
-						<%--  
-						THIS FEATURE IS DISABLED
 						<!-- Creates a pop-up that comes up when you hover over a person's name -->
 						<span class="author">
 						  <a href=<%="/user/"+authorName%>><%=authorName + " "%></a>
@@ -85,9 +83,6 @@ List<Message> messages = (List<Message>) request.getAttribute("messages");
 								</div>
 						  </div>
 						</span>
-						<!--  Shows message contents -->
-						--%>
-						<a href=<%="/user/"+authorName%>><%=authorName + " "%></a> : <%=message.getContent()%>
 					</li>
 				<%}%>
 			</ul>
