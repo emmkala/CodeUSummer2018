@@ -27,7 +27,11 @@ import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
+import com.google.appengine.api.datastore.Query.Filter;
+import com.google.appengine.api.datastore.Query.FilterOperator;
+import com.google.appengine.api.datastore.Query.FilterPredicate;
 import com.google.appengine.api.datastore.Query.SortDirection;
+
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Date;
@@ -321,4 +325,38 @@ public class PersistentDataStore {
       commentEntity.setProperty("content", comment.getContent());
       datastore.put(commentEntity);
   }
+  
+  public List<Post> getPostsForUser(String userId){
+	  Filter filter = new FilterPredicate("owner_uuid", FilterOperator.EQUAL, userId);
+	  Query query = new Query("posts").setFilter(filter);
+	  PreparedQuery pq = datastore.prepare(query);
+	  
+	  ArrayList<Post> out = new ArrayList<Post>();
+	  for(Entity ent: pq.asIterable()) {
+		  UUID uuid = UUID.fromString((String) ent.getProperty("uuid"));
+		  UUID ownerUuid = UUID.fromString((String) ent.getProperty("owner_uuid"));
+		  Instant creationTime = Instant.parse((String) ent.getProperty("creation_time"));
+		  out.add(new Post(uuid, ownerUuid, creationTime, (String) ent.getProperty("content")));
+	  }
+	  
+	  return out;
+  }
+  
+  public List<Comment> getCommentsForPost(String postId){
+	  Filter filter = new FilterPredicate("post_uuid", FilterOperator.EQUAL, postId);
+	  Query query = new Query("comments").setFilter(filter);
+	  PreparedQuery pq = datastore.prepare(query);
+	  
+	  ArrayList<Comment> out = new ArrayList<Comment>();
+	  for(Entity ent: pq.asIterable()) {
+		  UUID uuid = UUID.fromString((String) ent.getProperty("uuid"));
+		  UUID ownerUuid = UUID.fromString((String) ent.getProperty("owner_uuid"));
+		  Instant creationTime = Instant.parse((String) ent.getProperty("creation_time"));
+		  UUID postUuid = UUID.fromString((String) ent.getProperty("post_uuid"));
+		  UUID parentUuid = UUID.fromString((String) ent.getProperty("parent_uuid"));
+		  out.add(new Comment(uuid, ownerUuid, creationTime, postUuid, parentUuid, (String) ent.getProperty("content")));
+	  }
+	  
+	  return out;
+  	}
 }
