@@ -33,6 +33,13 @@ public class CommentStore {
         persistentStorageAgent.writeThrough(comment);
     }
 
+    public static CommentStore getInstance() {
+      if (instance == null) {
+        instance = new CommentStore(PersistentStorageAgent.getInstance());
+      }
+      return instance;
+    }
+
     public Map<Comment, List<List<Comment>>> getAllCommentsInPost(UUID postId) {
         Map<Comment, List<List<Comment>>> commentInPost = new HashMap<>();
         for (Comment comment : commentList) {

@@ -39,9 +39,11 @@ public class PostServlet extends HttpServlet{
     public void doGet(HttpServletRequest request, HttpServletResponse response)
         throws IOException, ServletException {
 
-      String usersProfile = getNameFromURL(request.getRequestURL());
-  		User currentUser = userStore.getUser(profileEditName);
+      String userName = request.getParameter("user");
+
+  		User currentUser = userStore.getUser(userName);
       UUID currentUserID = currentUser.getId();
+
 
       List<Post> allUsersPosts = postStore.getPostsByUserID(currentUserID);
       request.setAttribute("usersPosts", allUsersPosts);
@@ -53,6 +55,7 @@ public class PostServlet extends HttpServlet{
     public void doPost(HttpServletRequest request, HttpServletResponse response)
           throws IOException, ServletException {
 
+      String userName = (String) request.getSession().getAttribute("user");
 
       String postContent = request.getParameter("post");
       // this removes any HTML from the message content
@@ -61,16 +64,21 @@ public class PostServlet extends HttpServlet{
       Post post =
           new Post(
               UUID.randomUUID(),
-              currentUserID,
-              Instant.now();
-              cleanedPostContent,
-          )
+              userStore.getUser(userName).getId(),
+              Instant.now(),
+              cleanedPostContent);
 
-      PostStore.addPost(post);
+      postStore.addPost(post);
       // redirect to a GET request
-      response.sendRedirect("/user/" + usersProfile);
+      response.sendRedirect("/user/" + userName);
 
-      }
+    }
+    private String getNameFromURL(StringBuffer URL) {
+  		String URL_String = URL.toString();
+  		int usernameStartIndex = URL_String.indexOf("/user/");
+  		usernameStartIndex += "/user/".length();
+  		return URL_String.substring(usernameStartIndex);
+  	}
 
 
 

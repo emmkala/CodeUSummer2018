@@ -118,4 +118,9 @@ public class PersistentStorageAgent {
 
   public void writeThrough(Comment comment) {persistentDataStore.writeThrough(comment);}
 
+  public void clearData() {
+    persistentDataStore.clearData();
+    return;
+  }
+
 }

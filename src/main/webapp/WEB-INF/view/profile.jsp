@@ -8,6 +8,7 @@
 <%@ page import="codeu.model.data.Message" %>
 <%@ page import="java.util.List" %>
 <%@ page import="codeu.model.store.basic.MessageStore" %>
+<%@ page import="codeu.model.data.Post" %>
 
 <!DOCTYPE html>
 <html>
@@ -55,40 +56,21 @@
 			<p>Birthday not set</p>
 		<%}%>
 
-		<h2><%=user.getName()%>'s Messages</h2>
-		<% List<Message> everyMessage = (List<Message>) request.getAttribute("totalMessages");
-		int p = 0;
-		for(Message mess : everyMessage){
-			if(mess.getAuthorId().equals(user.getId())){ %>
-				<p> <%= mess.getContent() %> </p>
-				<form action="/chat/<%= user.getName() %>"> // this will send it to the conversation this is from
-				<input type="text" name="comment" placeholder="Reply To This Post!"> <br />
-				<button type="submit">Send</button>
-				<% p++; %>
-			<% } %>
-		<% } %>
-		<% if(p == 0){ %>
-			<p> <%=user.getName()%> has not contributed to any conversations. </p>
-		<% } %>
-
 		<h2><%=user.getName()%>'s Post's<h2>
-		<% List<Post> everyPost = (List<Post>) request.getAttribute("usersPosts");
-		// List<Comment> everyComment = (List<Post>) request.getAttribute("postComments");
-		if(everyPost != null){
-			for(Post post : everyPost){ %>
-				<p> <%=post.getContent()%> </p>
-				<!-- <%if(everyComment != null){
-				 	for(Comment comment : everyComment){ %>
-						<p> <%=comment.getContent()%> </p>
-					<% } %>
-				<% } %> -->
-				<form action="/chat/<%= user.getName() %>"> // this will send it to the conversation this is from
-				<input type="text" name="comment" placeholder="Comment on Your Post!"> <br />
-				<button type="submit">Send</button>
-			<% } %>
+		<% List<Post> everyPost = (List<Post>) request.getAttribute("usersPosts"); %>
+		<!-- List<Comment> everyComment = (List<Post>) request.getAttribute("postComments"); -->
+		<% if(everyPost == null){ %>
+					<p> They haven't made any posts. </p>
 		<% } else { %>
-		 	<p> You haven't made any posts. </p>
-		<% } %> 
+			<% for(Post post : everyPost){ %>
+				<p> <%=post.getContent()%> </p>
+
+				<form action="/comment?post_id=<%= post.getId() %>&user=<%user.getName();%>">
+				<input type="text" name="content" placeholder="Comment on This Post!"> <br />
+				<button type="submit">Send</button>
+			</form>
+		<% }
+		} %>
 
 	<%} else {%>
 		<img src=<%=user.getProfileImage().getURL()%> height = "150" width = "200">
@@ -100,43 +82,26 @@
 		</form>
 
 		<h2> Make a Post! </h2>
-		<form action="/user/<%= user.getName() %>"> // this is where it will use a method to post the comment
+		<form action="/user/<%= user.getName() %>"> 
 		<input type="text" name="post" placeholder="Post about any topic you want!">
 		<button type="submit">Send</button>
+		</form>
 
 		<h2> Your Posts </h2>
-		<% List<Post> everyPost = (List<Post>) request.getAttribute("usersPosts");
-		// List<Comment> everyComment = (List<Post>) request.getAttribute("postComments");
-		if(everyPost != null){
-			for(Post post : everyPost){ %>
-				<p> <%=post.getContent()%> </p>
-				<!-- <%if(everyComment != null){
-				 	for(Comment comment : everyComment){ %>
-						<p> <%=comment.getContent()%> </p>
-					<% } %>
-				<% } %> -->
-				<form action="/chat/<%= user.getName() %>"> // this will send it to the conversation this is from
-				<input type="text" name="comment" placeholder="Comment on Your Post!"> <br />
-				<button type="submit">Send</button>
-			<% } %>
+		<% List<Post> everyPost = (List<Post>) request.getAttribute("usersPosts"); %>
+		<!-- List<Comment> everyComment = (List<Post>) request.getAttribute("postComments"); -->
+		<% if(everyPost == null){ %>
+					<p> You haven't made any posts. </p>
 		<% } else { %>
-		 	<p> You haven't made any posts. </p>
-		<% } %>
+			<% for(Post post : everyPost){ %>
+				<p> <%=post.getContent()%> </p>
 
-
-		<h2>Your Messages</h2>
-		<% List<Message> everyMessage = (List<Message>) request.getAttribute("totalMessages");
-		int i = 0;
-		for(Message mess : everyMessage){
-			if(mess.getAuthorId().equals(user.getId())){ %>
-				<p> <%= mess.getContent() %> </p>
-				<% i++; %>
-			<% } %>
-		<% } %>
-		<% if(i == 0){ %>
-			<p> You have not made any posts. Head to conversations to get started! </p>
-		<% } %>
-		<hr/>
+				<form action="/comment?post_id=<%= post.getId() %>&user=<%user.getName();%>">
+				<input type="text" name="content" placeholder="Comment on Your Post!"> <br />
+				<button type="submit">Send</button>
+			</form>
+		<% }
+		} %>
 
 		<form action="/user/<%=requestedProfile%>" method="POST">
 			<h2>Edit About Me</h2>

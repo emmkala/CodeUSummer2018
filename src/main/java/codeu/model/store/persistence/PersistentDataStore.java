@@ -245,4 +245,6 @@ public class PersistentDataStore {
       datastore.put(commentEntity);
   }
 
+  public void clearData() {  }
+
 }
