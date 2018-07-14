@@ -16,6 +16,7 @@
 <%@ page import="java.util.List"%>
 <%@ page import="codeu.model.data.Conversation"%>
 <%@ page import="codeu.model.data.Message"%>
+<%@ page import="codeu.model.data.User"%>
 <%@ page import="codeu.model.store.basic.UserStore"%>
 <%
 Conversation conversation = (Conversation) request.getAttribute("conversation");
@@ -26,16 +27,8 @@ List<Message> messages = (List<Message>) request.getAttribute("messages");
 <html>
 <head>
 <title><%= conversation.getTitle() %></title>
+<link rel="stylesheet" href="/css/chat.css" type="text/css">
 <link rel="stylesheet" href="/css/main.css" type="text/css">
-
-<style>
-#chat {
-	background-color: white;
-	height: 500px;
-	overflow-y: scroll
-}
-
-</style>
 
 <script>
     // scroll the chat div to the bottom
@@ -46,7 +39,6 @@ List<Message> messages = (List<Message>) request.getAttribute("messages");
   </script>
 </head>
 <body onload="scrollChat()">
-
 	<nav>
 		<a id="navTitle" href="/">CodeU Chat App</a> <a href="/conversations">Conversations</a>
 		<% if (request.getSession().getAttribute("user") != null) { %>
@@ -69,7 +61,6 @@ List<Message> messages = (List<Message>) request.getAttribute("messages");
 		</h1>
 
 		<hr/>
-
 		<!--
 					IN PROGRESS WORK ON POP MENU
 
@@ -128,11 +119,28 @@ List<Message> messages = (List<Message>) request.getAttribute("messages");
 			<ul>
 				<%
 				for (Message message : messages) {
-				  String author = UserStore.getInstance()
+				  String authorName = UserStore.getInstance()
 				    .getUser(message.getAuthorId()).getName();
+				  User author = UserStore.getInstance().getUser(authorName);
 				%>
 					<li>
-						<a href=<%="/user/"+author%> id="Author"><%= author %></a>:<%= message.getContent() %>
+						<%--  
+						THIS FEATURE IS DISABLED
+						<!-- Creates a pop-up that comes up when you hover over a person's name -->
+						<span class="author">
+						  <a href=<%="/user/"+authorName%>><%=authorName + " "%></a>
+						  <div class="popup">
+							    <img class="popup-image" src="<%=author.getProfileImage().getURL()%>">
+							    <div class="popup-text">
+								    <h3 class="popup-name"> <%=authorName%> </h3>
+								    <p class="popup-occupation"><%=author.getOccupation()%></p>
+								    <p class="popup-email"><%=author.getEmail()%></p>
+								</div>
+						  </div>
+						</span>
+						<!--  Shows message contents -->
+						--%>
+						<a href=<%="/user/"+authorName%>><%=authorName + " "%></a> : <%=message.getContent()%>
 					</li>
 				<%}%>
 			</ul>
@@ -154,6 +162,5 @@ List<Message> messages = (List<Message>) request.getAttribute("messages");
 		<hr/>
 
 	</div>
-
 </body>
 </html>

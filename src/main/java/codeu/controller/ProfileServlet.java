@@ -54,7 +54,7 @@ public class ProfileServlet extends HttpServlet {
 	}
 
 	@Override
-	public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException{
+	public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
 		String profileEditName = getNameFromURL(request.getRequestURL());
 
 		User user = userStore.getUser(profileEditName);
@@ -62,31 +62,66 @@ public class ProfileServlet extends HttpServlet {
 
 		try {
 			Date newBirthday = parseDate(request.getParameter("updated birthday"));
-			user.setBirthday(newBirthday);
+			if(newBirthday != null) {
+				user.setBirthday(newBirthday);
+			}
 		} catch(NullPointerException e) {
 			System.out.println("Didn't set birthday");
 		}
 
 		try {
 			String newDescription = request.getParameter("updated description");
-
-			if(newDescription.trim() != "") {
+			
+			if(!newDescription.trim().equals("")) {
 				user.setDescription(newDescription);
 			}
 		} catch(NullPointerException e) {
-			System.out.println("Didn't set description");
+			//Do nothing
 		}
 
 		try {
 			String newSex = request.getParameter("updated sex");
 			user.setSex(Sex.valueOf(newSex));
 		} catch(NullPointerException e) {
-			System.out.println("Didn't set sex");
+			//Do nothing
 		}
 
 		try {
+			String newEmail = request.getParameter("updated email");
+			if(!newEmail.trim().equals("")) {
+				user.setEmail(newEmail);
+			}
+		} catch(NullPointerException e) {
+			//Do nothing
+		}
+		
+		try {
 			String workStatus = request.getParameter("updated work status");
+			if (workStatus != "default") {
+				if(workStatus.equals("employed")) {
+					String employer = request.getParameter("updated employer");
+					String position = request.getParameter("updated position");
+					if(employer != null && position != null &
+							!employer.trim().equals("") && !position.trim().equals("")) {
+						user.setOccupation(user.new Occupation(employer, position));
+					}
+				} else if (workStatus.equals("student")) {
+					String school = request.getParameter("updated school");
+					int year = Integer.parseInt(request.getParameter("updated school year"));
+					if(school != null && !school.trim().equals("") && year != 0) {	
+						user.setOccupation(user.new Occupation(school, year));
+					}
+				} else  {
+					user.setOccupation(user.new Occupation());
+				}
+			} 
+		} catch(NullPointerException e) {
+			System.out.println("Didn't set occupation");
+		}
 
+
+		String workStatus = request.getParameter("updated work status");
+		if (workStatus != null) {
 			Occupation occupation = null;
 			if(workStatus.equals("employed")) {
 				String employer = request.getParameter("updated employer");
@@ -101,46 +136,19 @@ public class ProfileServlet extends HttpServlet {
 			} else {
 				System.out.println("Unrecongized work status");
 			}
-
 			user.setOccupation(occupation);
-		} catch(NullPointerException e) {
-			System.out.println("Didn't set occupation");
 		}
-
-		String workStatus = request.getParameter("updated work status");
-
-		Occupation occupation = null;
-		if(workStatus.equals("employed")) {
-			String employer = request.getParameter("updated employer");
-			String position = request.getParameter("updated position");
-			occupation = user.new Occupation(employer, position);
-		} else if (workStatus.equals("student")){
-			String school = request.getParameter("updated school");
-			int year = Integer.parseInt(request.getParameter("updated school year"));
-			occupation = user.new Occupation(school, year);
-		} else if (workStatus.equals("unemployed")) {
-			occupation = user.new Occupation();
-		} else {
-			System.out.println("Unrecongized work status");
-		}
-
-
-		user.setOccupation(occupation);
 
 		userStore.updateUser(user);
 
-		doGet(request,response);
+		doGet(request, response);
 	}
 
 	@Override
 	public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
 		String profileRequestName = getNameFromURL(request.getRequestURL());
-		System.out.println(profileRequestName);
 
-
-		if (userStore.isUserRegistered(profileRequestName)) {
-			User requestedProfile = userStore.getUser(profileRequestName);
-		} else {
+		if (!userStore.isUserRegistered(profileRequestName)) {
 			response.sendRedirect("../404.html");
 			return;
 		}
@@ -158,8 +166,12 @@ public class ProfileServlet extends HttpServlet {
 
 		request.setAttribute("image", displayedImage);
 		*/
-
-		request.setAttribute("blobstoreService", blobstoreService);
+		
+		if (!userStore.isUserRegistered(profileRequestName)) {
+			response.sendRedirect("../404.html");
+			return;
+		}
+				request.setAttribute("blobstoreService", blobstoreService);
 
 		request.setAttribute("requestedProfile", profileRequestName);
 
