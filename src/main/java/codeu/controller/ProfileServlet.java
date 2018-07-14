@@ -31,27 +31,32 @@ import com.google.appengine.api.images.ImagesServiceFactory;
 import codeu.model.data.User.Sex;
 import codeu.model.data.User;
 import codeu.model.store.basic.UserStore;
+import codeu.model.store.basic.MessageStore;
+import codeu.model.data.Message;
+
+import java.util.*;
 
 public class ProfileServlet extends HttpServlet {
 	private UserStore userStore;
-	
+	private MessageStore messageStore;
+
 	BlobstoreService blobstoreService;
 	ImagesService imagesService;
-	
+
 	@Override
 	public void init() throws ServletException {
 		super.init();
-		userStore = UserStore.getInstance();
-		
+		userStore = UserStore.getInstance();	
 		//Some necessities for grabbing images
+		messageStore = messageStore.getInstance();
 		blobstoreService = BlobstoreServiceFactory.getBlobstoreService();
 		imagesService = ImagesServiceFactory.getImagesService();
 	}
 
 	@Override
-	public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException{
+	public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
 		String profileEditName = getNameFromURL(request.getRequestURL());
-		
+
 		User user = userStore.getUser(profileEditName);
 		UserStore userStore = UserStore.getInstance();
 
@@ -97,55 +102,59 @@ public class ProfileServlet extends HttpServlet {
 				user.setOccupation(user.new Occupation());
 			}
 		}
-		
+
 		userStore.updateUser(user);
-		
-		doGet(request,response);
+
+		doGet(request, response);
 	}
-	
+
 	@Override
 	public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
 		//Gets the user name from the URL
 		String profileRequestName = getNameFromURL(request.getRequestURL());
-		
 		//Checks to make sure the page requested is a valid username
 		if (!userStore.isUserRegistered(profileRequestName)) {
 			response.sendRedirect("../404.html");
 			return;
 		}
+
+		List<Message> allMessages = messageStore.getAllMessages();
+
+		request.setAttribute("totalMessages", allMessages);
+
 		
-		//forwards the blob-stuff to the jsp
-		request.setAttribute("blobstoreService", blobstoreService);
-		//forwards the profile name to the jsp
+		if (!userStore.isUserRegistered(profileRequestName)) {
+			response.sendRedirect("../404.html");
+			return;
+		}
+				request.setAttribute("blobstoreService", blobstoreService);
+
 		request.setAttribute("requestedProfile", profileRequestName);
-	  	
-		//Checks to see if the user that's logged in is the same user whose page is being requested and forwards
-		//that information to the jsp
+
 		if(request.getSession().getAttribute("user") != null) {
 		  	String loggedInUserName = (String) request.getSession().getAttribute("user");
 		  	request.setAttribute("canEdit", loggedInUserName.equals(profileRequestName));
 		} else {
 		  	request.setAttribute("canEdit", false);
 		}
-		
+
 		request.getRequestDispatcher("/WEB-INF/view/profile.jsp").forward(request, response);
 	}
-	
+
 	//A method I'm using to parse dates from String to Date
 	private Date parseDate(String in) {
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 		Date out;
-		
+
 		try {
 			out = sdf.parse(in);
 		} catch (Exception e) {
 			out = null;
 		}
-		
+
 		return out;
 	}
-	
-	
+
 	//A method I'm using to get the name given either a relative or absolute URL
 	private String getNameFromURL(StringBuffer URL) {
 		String URL_String = URL.toString();

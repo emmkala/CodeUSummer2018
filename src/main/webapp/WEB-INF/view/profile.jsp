@@ -5,6 +5,11 @@
 <%@ page import="codeu.model.data.User"%>
 <%@ page import="codeu.model.store.basic.UserStore"%>
 <%@ page import="java.util.Date"%>
+<%@ page import="codeu.model.data.Conversation" %>
+<%@ page import="codeu.model.data.Message" %>
+<%@ page import="java.util.List" %>
+<%@ page import="codeu.model.store.basic.MessageStore" %>
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -81,7 +86,13 @@
 		<% } %>
 		<a href="/about.jsp">About</a>
 	</nav>
- 	
+
+	<%
+    String requestedProfile = (String) request.getAttribute("requestedProfile");
+    User user = UserStore.getInstance().getUser(requestedProfile);
+  	boolean canEdit = (boolean) request.getAttribute("canEdit");
+ 	%>
+
 	<%if(!canEdit) {%>
 		<img src=<%=user.getProfileImage().getURL()%> height = "150" width = "150">
 		<span><%=user.getName()%>'s Profile</span>
@@ -107,6 +118,21 @@
 		<span>Birthday : </span>
 		<span><%=user.getBirthday(new SimpleDateFormat("MM-dd-yyyy"))%></span>
 
+		<h2><%=user.getName()%>'s Posts</h2>
+		<% List<Message> everyMessage = (List<Message>) request.getAttribute("totalMessages");
+		int p = 0;
+		for(Message mess : everyMessage){
+			if(mess.getAuthorId().equals(user.getId())){ %>
+				<p> <%= mess.getContent() %> </p>
+				<form action="/user/<%= user.getName() %>">
+				<input type="text" name="comment" placeholder="Comment on this post!"> <br />
+				<button type="submit">Send</button>
+				<% p++; %>
+			<% } %>
+		<% } %>
+		<% if(p == 0){ %>
+			<p> You have not made any posts. Head to conversations to get started! </p>
+		<% } %>
 	<%} else {%>
 		<%BlobstoreService blobstoreService = (BlobstoreService) request.getAttribute("blobstoreService");%>
 		<img src=<%=user.getProfileImage().getURL()%> height = "150" width = "200">
@@ -117,9 +143,21 @@
 			<input type="file" name="profileImage">
 			<input type="submit" value="Upload Image">
 		</form>
-		
+
+		<h2>Your Posts</h2>
+		<% List<Message> everyMessage = (List<Message>) request.getAttribute("totalMessages");
+		int i = 0;
+		for(Message mess : everyMessage){
+			if(mess.getAuthorId().equals(user.getId())){ %>
+				<p> <%= mess.getContent() %> </p>
+				<% i++; %>
+			<% } %>
+		<% } %>
+		<% if(i == 0){ %>
+			<p> You have not made any posts. Head to conversations to get started! </p>
+		<% } %>
 		<hr/>
-		
+
 		<form action="/user/<%=requestedProfile%>" method="POST">
 			<div>About Me</div>
 			<input name="updated description" type="text" value="<%=user.getDescription()%>">
@@ -147,12 +185,13 @@
 					<option value="FEMALE">Female</option>
 				<%}%>
 			</select>
-			
+
 			<br>
 			<br>
 
 			<span>Email : </span>
 			<input name="updated email" type="text" value="<%=user.getEmail()%>">
+<<<<<<< HEAD
 	
 			<script> 
 				reflectCurrentValues();
@@ -198,5 +237,4 @@
 		</form>
 	<%}%>
 </body>
-</html> 
-    
+</html>
