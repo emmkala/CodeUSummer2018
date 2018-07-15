@@ -49,8 +49,8 @@ public class ProfileServlet extends HttpServlet {
 	@Override
 	public void init() throws ServletException {
 		super.init();
-		postStore = postStore.getInstance();
-		commentStore = commentStore.getInstance();
+		postStore = PostStore.getInstance();
+		commentStore = CommentStore.getInstance();
 		userStore = UserStore.getInstance();
 		//Some necessities for grabbing images
 		blobstoreService = BlobstoreServiceFactory.getBlobstoreService();
@@ -127,6 +127,9 @@ public class ProfileServlet extends HttpServlet {
 
 		List<Post> allUsersPosts = postStore.getPostsByUserID(currentUserID);
 		request.setAttribute("usersPosts", allUsersPosts);
+
+		List<Comment> allComments  = commentStore.getAllComments();
+		request.setAttribute("totalComments", allComments);
 
 		if (!userStore.isUserRegistered(profileRequestName)) {
 			response.sendRedirect("../404.html");

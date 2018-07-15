@@ -24,7 +24,7 @@ public class CommentStore {
         commentList = new ArrayList<>();
     }
 
-    public List<Comment> getAllComment() {
+    public List<Comment> getAllComments() {
         return commentList;
     }
 

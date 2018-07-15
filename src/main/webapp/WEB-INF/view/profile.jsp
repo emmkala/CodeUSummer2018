@@ -89,12 +89,6 @@
 		<a href="/about.jsp">About</a>
 	</nav>
 
-	<%
-    String requestedProfile = (String) request.getAttribute("requestedProfile");
-    User user = UserStore.getInstance().getUser(requestedProfile);
-  	boolean canEdit = (boolean) request.getAttribute("canEdit");
- 	%>
-
 	<%if(!canEdit) {%>
 		<img src=<%=user.getProfileImage().getURL()%> height = "150" width = "150">
 		<span><%=user.getName()%>'s Profile</span>
@@ -121,7 +115,9 @@
 		<span><%=user.getBirthday(new SimpleDateFormat("MM-dd-yyyy"))%></span>
 
 		<h2><%=user.getName()%>'s Post's<h2>
-		<% List<Post> everyPost = (List<Post>) request.getAttribute("usersPosts"); %>
+		<% List<Post> everyPost = (List<Post>) request.getAttribute("usersPosts");
+		List<Comment> everyComment = (List<Comment>) request.getAttribute("totalComments"); %>
+
 		<!--<div class="card text-white bg-info mb-3" style="max-width: 20rem;">
   			<div class="card-body">-->
 
@@ -130,6 +126,11 @@
 		<% } else { %>
 			<% for(Post post : everyPost){ %>
 				<p> <%=post.getContent()%> </p>
+				<%for(Comment comment : everyComment){
+						if(comment.getPostId() == post.getId()){%>
+						<p> <%=comment.getContent()%> </p>
+				<% }
+			}%>
 				<form action="/comment?post_id=<%= post.getId() %>&user=<%user.getName();%>">
 				<input type="text" name="content" placeholder="Comment on This Post!"> <br />
 				<button type="submit">Send</button>
@@ -159,17 +160,19 @@
 		</form>
 
 		<h2> Your Posts </h2>
-		<% List<Post> everyPost = (List<Post>) request.getAttribute("usersPosts"); %>
-		<% if(everyPost == null){ %>
-					<% System.out.println("No posts"); %>
+		<% List<Post> everyPost = (List<Post>) request.getAttribute("usersPosts");
+	 		 List<Comment> everyComment = (List<Comment>) request.getAttribute("totalComments");
+			 if(everyPost == null){ %>
 					<p> You haven't made any posts. </p>
 		<% } else { %>
 			<% for(Post post : everyPost){ %>
 				<p> <%=post.getContent()%> </p>
-					<% List<Comment> everyComment = (List<Comment>) getCommentsForPost(post.getId());
-					for(Comment comment : everyComment){ %>
+					<%for(Comment comment : everyComment){
+							if(comment.getPostId() == post.getId()){%>
 							<p> <%=comment.getContent()%> </p>
-					<% } %>
+					<% }
+				}%>
+
 
 				<form action="/comment?post_id=<%= post.getId() %>&user=<%user.getName();%>">
 				<input type="text" name="content" placeholder="Comment on Your Post!"> <br />
