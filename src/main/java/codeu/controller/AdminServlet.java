@@ -41,11 +41,11 @@ public class AdminServlet extends HttpServlet {
     void setMessageStore(MessageStore messageStore) {
         this.messageStore = messageStore;
     }
-    
+
     void setPersistentStore(PersistentStorageAgent persistentStorage) {
         this.persistentStorage = persistentStorage;
     }
-    
+
     void addToHashMap(HashMap<User, Integer> map, User key, int val){
         if (map.containsKey(key)){
             map.put(key, map.get(key) + val);
@@ -83,15 +83,15 @@ public class AdminServlet extends HttpServlet {
         request.setAttribute("numConvo", numConvo);
         request.setAttribute("numUser", numUser);
         request.setAttribute("numMessages", numMessages);
-        request.setAttribute("lastUser", userStore.lastUser().getName());
+        //request.setAttribute("lastUser", userStore.lastUser().getName());
         request.setAttribute("mostActive", actUser.getName());
         request.setAttribute("wordiest", wordUser.getName());
         String username = (String) request.getSession().getAttribute("user");
         if (username == null){return;}
         User user = userStore.getUser(username);
-        
+
         request.setAttribute("isAdmin", user != null ? user.checkAdmin() : false);
-        
+
         request.getRequestDispatcher("/WEB-INF/view/admin.jsp").forward(request, response);
     }
 
@@ -100,10 +100,10 @@ public class AdminServlet extends HttpServlet {
     	if(request.getParameter("deleteEverthing") != null) {
     		persistentStorage.clearData();
     	}
-    	
+
         String username = (String) request.getSession().getAttribute("user");
         User user = userStore.getUser(username);
-                
+
         if (user.checkAdmin()) {
             response.sendRedirect("/admin");
             return;

@@ -53,7 +53,6 @@ public class ProfileServlet extends HttpServlet {
 		commentStore = commentStore.getInstance();
 		userStore = UserStore.getInstance();
 		//Some necessities for grabbing images
-		messageStore = messageStore.getInstance();
 		blobstoreService = BlobstoreServiceFactory.getBlobstoreService();
 		imagesService = ImagesServiceFactory.getImagesService();
 	}

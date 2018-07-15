@@ -166,7 +166,7 @@
 		<% } else { %>
 			<% for(Post post : everyPost){ %>
 				<p> <%=post.getContent()%> </p>
-					<% List<Comment> everyComment = (List<Comment>) request.getAttribute("postComments");
+					<% List<Comment> everyComment = (List<Comment>) getCommentsForPost(post.getId());
 					for(Comment comment : everyComment){ %>
 							<p> <%=comment.getContent()%> </p>
 					<% } %>

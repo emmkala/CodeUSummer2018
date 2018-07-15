@@ -360,6 +360,6 @@ public class PersistentDataStore {
 
 	  return out;
   	}
-  public void clearData() { }
+  //public void clearData() { }
 
 }
