@@ -79,15 +79,30 @@
 </script>
 </head>
 <body>
-	<nav>
-		<a id="navTitle" href="/">CodeU Chat App</a> <a href="/conversations">Conversations</a>
-		<% if(request.getSession().getAttribute("user") != null){ %>
-			<a>Hello <%=request.getSession().getAttribute("user") %>!</a>
-		<% } else{ %>
-			<a href="/login">Login</a>
-		<% } %>
-		<a href="/about.jsp">About</a>
-	</nav>
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+<a class="navbar-brand" href="/">CodeU Chat App</a>
+<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarColor03" aria-controls="navbarColor03" aria-expanded="false" aria-label="Toggle navigation">
+	<span class="navbar-toggler-icon"></span>
+</button>
+
+<div class="collapse navbar-collapse" id="navbarColor03">
+	<ul class="navbar-nav mr-auto">
+		<li class="nav-item active">
+			<a class="nav-link" href="/conversations">Conversations <span class="sr-only">(current)</span></a>
+		</li>
+		<li class="nav-item">
+			<% if(request.getSession().getAttribute("user") != null){ %>
+				<a class="nav-link"> Hello <%=request.getSession().getAttribute("user") %>!</a>
+			<% } else{ %>
+					<a class="nav-link" href="/login">Login</a>
+			<% } %>
+		</li>
+		<li class="nav-item">
+			<a class="nav-link" href="/about.jsp">About</a>
+		</li>
+	</ul>
+</div>
+</nav>
 
 	<%if(!canEdit) {%>
 		<img src=<%=user.getProfileImage().getURL()%> height = "150" width = "150">
@@ -96,25 +111,24 @@
 
 		<hr/>
 
-		<div> About <%=user.getName()%></div>
-		<p><%= user.getDescription() %></p>
+		<div class="card border-info mb-3" style="max-width: 32rem;">
+	  	<div class="card-header">About <%=user.getName()%></div>
+	  		<div class="card-body">
+	    		<p class="card-text"><%= user.getDescription() %></p>
+	  		</div>
+		</div>
 
-		<br>
+		<div class="card border-info mb-3" style="max-width: 32rem;">
+	  	<div class="card-header">General Informaion</div>
+	  		<div class="card-body">
+	    		<p class="card-text"> Sex : <%= user.getSex().toString().substring(0,1) + user.getSex().toString().substring(1).toLowerCase()%>
+					Email : <%= user.getEmail()%>
+					Birthday : <%=user.getBirthday(new SimpleDateFormat("MM-dd-yyyy"))%>
+					</p>
+	  		</div>
+		</div>
 
-		<span>Sex : </span>
-		<span><%= user.getSex().toString().substring(0,1) + user.getSex().toString().substring(1).toLowerCase()%></span>
-
-		<br>
-
-		<span>Email : </span>
-		<span><%= user.getEmail()%></span>
-
-		<br>
-
-		<span>Birthday : </span>
-		<span><%=user.getBirthday(new SimpleDateFormat("MM-dd-yyyy"))%></span>
-
-		<h2><%=user.getName()%>'s Post's<h2>
+		<h4><%=user.getName()%>'s Post's</h4>
 		<% List<Post> everyPost = (List<Post>) request.getAttribute("usersPosts");
 		List<Comment> everyComment = (List<Comment>) request.getAttribute("totalComments"); %>
 
@@ -152,34 +166,6 @@
 			<input type="file" name="profileImage">
 			<input type="submit" value="Upload Image">
 		</form>
-
-		<h2> Make a Post! </h2>
-		<form action="/post" method="POST">
-		<input type="text" name="post" placeholder="Post about any topic you want!">
-		<button type="submit">Send</button>
-		</form>
-
-		<h2> Your Posts </h2>
-		<% List<Post> everyPost = (List<Post>) request.getAttribute("usersPosts");
-	 		 List<Comment> everyComment = (List<Comment>) request.getAttribute("totalComments");
-			 if(everyPost == null){ %>
-					<p> You haven't made any posts. </p>
-		<% } else { %>
-			<% for(Post post : everyPost){ %>
-				<p> <%=post.getContent()%> </p>
-					<%for(Comment comment : everyComment){
-							if(comment.getPostId() == post.getId()){%>
-							<p> <%=comment.getContent()%> </p>
-					<% }
-				}%>
-
-
-				<form action="/comment?post_id=<%= post.getId() %>&user=<%user.getName();%>">
-				<input type="text" name="content" placeholder="Comment on Your Post!"> <br />
-				<button type="submit">Send</button>
-			</form>
-		<% }
-		} %>
 
 		<form action="/user/<%=requestedProfile%>" method="POST">
 			<div>About Me</div>
@@ -308,7 +294,7 @@
 				updateFieldVisibility();
 			</script>
 
-			<h2>Work Status:</h2>
+			<h4>Work Status:</h4>
 			<select name="updated work status" id="workStatus" onload="updateFieldVisibility()" onchange="updateFieldVisibility()" onclick = "removeDefault(this);">
 				<option disabled value="default"> -- select an option -- </option>
 				<option value="employed">Employed</option>
@@ -371,6 +357,39 @@
 					<input type="text" id="OF2PositionInput">
 				</div>
 	        </div>
+
+			<h5> Make a Post! </h5>
+			<form action="/post" method="POST">
+			<input type="text" name="post" placeholder="Post about any topic you want!">
+			<button type="submit">Send</button>
+			</form>
+
+			<h4> Your Posts </h4>
+
+			<% List<Post> everyPost = (List<Post>) request.getAttribute("usersPosts");
+				 List<Comment> everyComment = (List<Comment>) request.getAttribute("totalComments");
+				 if(everyPost == null){ %>
+						<p> You haven't made any posts. </p>
+			<% } else { %>
+				<% for(Post post : everyPost){ %>
+				<div class="card text-white bg-info mb-3" style="max-width: 20rem;">
+					<div class="card-body">
+						<p class="card-text"><%=post.getContent()%></p>
+					</div>
+				</div>
+						<%for(Comment comment : everyComment){
+								if(comment.getPostId() == post.getId()){%>
+								<p> <%=comment.getContent()%> </p>
+						<% }
+					}%>
+
+
+					<form action="/comment?post_id=<%= post.getId() %>&user=<%user.getName();%>">
+					<input type="text" name="content" placeholder="Comment on Your Post!"> <br />
+					<button type="submit">Send</button>
+				</form>
+			<% }
+			} %>
 
 			<input type="submit" value="Update">
 		</form>
