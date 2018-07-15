@@ -9,12 +9,13 @@
 <%@ page import="java.util.List" %>
 <%@ page import="codeu.model.store.basic.MessageStore" %>
 <%@ page import="codeu.model.data.Post" %>
+<%@ page import="codeu.model.data.Comment" %>
 
 <!DOCTYPE html>
 <html>
 <head>
 <title>Profile</title>
-<link rel="stylesheet" href="/css/main.css">
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootswatch/4.1.2/litera/bootstrap.min.css">
 </head>
 <body>
 	<nav>
@@ -58,19 +59,23 @@
 
 		<h2><%=user.getName()%>'s Post's<h2>
 		<% List<Post> everyPost = (List<Post>) request.getAttribute("usersPosts"); %>
-		<!-- List<Comment> everyComment = (List<Post>) request.getAttribute("postComments"); -->
+		<!--<div class="card text-white bg-info mb-3" style="max-width: 20rem;">
+  			<div class="card-body">-->
+
 		<% if(everyPost == null){ %>
 					<p> They haven't made any posts. </p>
 		<% } else { %>
 			<% for(Post post : everyPost){ %>
 				<p> <%=post.getContent()%> </p>
-
 				<form action="/comment?post_id=<%= post.getId() %>&user=<%user.getName();%>">
 				<input type="text" name="content" placeholder="Comment on This Post!"> <br />
 				<button type="submit">Send</button>
 			</form>
+
 		<% }
 		} %>
+			<!--	</div>
+		</div> -->
 
 	<%} else {%>
 		<img src=<%=user.getProfileImage().getURL()%> height = "150" width = "200">
@@ -82,19 +87,23 @@
 		</form>
 
 		<h2> Make a Post! </h2>
-		<form action="/user/<%= user.getName() %>"> 
+		<form action="/post" method="POST">
 		<input type="text" name="post" placeholder="Post about any topic you want!">
 		<button type="submit">Send</button>
 		</form>
 
 		<h2> Your Posts </h2>
 		<% List<Post> everyPost = (List<Post>) request.getAttribute("usersPosts"); %>
-		<!-- List<Comment> everyComment = (List<Post>) request.getAttribute("postComments"); -->
 		<% if(everyPost == null){ %>
+					<% System.out.println("No posts"); %>
 					<p> You haven't made any posts. </p>
 		<% } else { %>
 			<% for(Post post : everyPost){ %>
 				<p> <%=post.getContent()%> </p>
+					<% List<Comment> everyComment = (List<Comment>) request.getAttribute("postComments");
+					for(Comment comment : everyComment){ %>
+							<p> <%=comment.getContent()%> </p>
+					<% } %>
 
 				<form action="/comment?post_id=<%= post.getId() %>&user=<%user.getName();%>">
 				<input type="text" name="content" placeholder="Comment on Your Post!"> <br />
@@ -109,6 +118,9 @@
 			<p>About Me:</p>
 			<input name="updated description" type="text"
 				value="<%=user.getDescription()%>" width="300" height="200">
+
+			<br>
+			<input name="updated description" type="text" value="<%=user.getDescription()%>">
 
 			<br>
 			<br>
@@ -134,12 +146,10 @@
 			<br>
 			<br>
 
-			<h2>Work Status:</h2>
-			<select name="updated work status" id="workStatus" onchange="updateFields()">
-				<option value="employed">Employed</option>
-				<option value="unemployed">Unemployed</option>
+			<p>Email:</p>
+			<input name="updated email" type="text" value="<%=user.getEmail()%>">
 
-				<option value="student">Student</option>
+			<option value="student">Student</option>
 
 			</select>
 
@@ -189,7 +199,7 @@
 	                  employerField.style.display = "none";
 	                  positionField.style.display = "none";
 	              }
-	              if(workStatus.value == "unemployed"){
+	              if(workStatus.value == "unemployed" || workStatus.value == "default"){
 	                  schoolField.style.display = "none";
 	                  schoolYearField.style.Display = "none";
 	                  employerField.style.display = "none";
@@ -197,7 +207,72 @@
 	              }
 	            }
 	            updateFields();
-	     	</script>
+
+
+
+				function removeDefault(elem) {
+					var options = elem.childNodes;
+					for (i = 0; i < options.length; i++) {
+						if (options[i].value == "default") {
+							options[i].style = "display:none";
+							break;
+						}
+					}
+				}
+
+				//This doesn't work
+				/*
+				function setStoredWorkStatus(){
+					var workStatus = document.getElementById("workStatus");
+					var currentWorkStatus = "<%=user.getOccupation().getOccupationType()%>".toLowerCase();
+					for(i = 0; i < workStatus.childNodes; i++){
+						if(workStatus.childNodes[i] == currentWorkStatus){
+							workStatus.childNodes[i].selected = "selected";
+						}
+					}
+				}
+
+				<%if(user.getOccupation() != null) {%>
+					setStoredWorkStatus();
+				<%}%>
+				*/
+				updateFields();
+			</script>
+
+			<h2>Work Status:</h2>
+			<select name="updated work status" id="workStatus" onchange="updateFields(); removeDefault(this);">
+				<option disabled selected value="default"> -- select an option -- </option>
+				<option value="employed">Employed</option>
+				<option value="unemployed">Unemployed</option>
+				<option value="student">Student</option>
+			</select>
+
+	        <div id="schoolField" style="display:none">
+	        	<h3>High School/University</h3>
+	        	<input name="updated school name" type="text" name="school">
+			</div>
+
+	        <div id="schoolYearField" style="display:none">
+	        	<h3>Year</h3>
+	        	<select name="updated school year" onchange="updateFields(); removeDefault(this)">
+	        		<option disabled selected value="default"> -- select an option -- </option>
+	        	    <option style="display:none;" disabled selected value="0"> -- select an option -- </option>
+	            	<option value=1>Freshman</option>
+	                <option value=2>Sophmore</option>
+	        		<option value=3>Junior</option>
+	                <option value=4>Senior</option>
+	             </select>
+	        </div>
+
+	        <div id="employerField" style="display:none">
+	        	<h3>Employer</h3>
+	        	<input name="updated employer" type="text" name="employer">
+			</div>
+
+	        <div id="positionField" style="display:none">
+	        	<h3>Position</h3>
+	        	<input name="updated position" type="text" name="position">
+			</div>
 
 			<br>
 			<br>

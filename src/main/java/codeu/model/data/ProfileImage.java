@@ -29,7 +29,7 @@ public class ProfileImage {
 		return imageURL;
 	}
 	
-	static ProfileImage getDefaultImage(Sex sex) {
+	public static ProfileImage getDefaultImage(Sex sex) {
 		if(sex == Sex.FEMALE) {
 			return defaultFemale;
 		}

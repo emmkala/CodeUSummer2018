@@ -44,10 +44,6 @@ public class PostServlet extends HttpServlet{
   		User currentUser = userStore.getUser(userName);
       UUID currentUserID = currentUser.getId();
 
-
-      List<Post> allUsersPosts = postStore.getPostsByUserID(currentUserID);
-      request.setAttribute("usersPosts", allUsersPosts);
-
       request.getRequestDispatcher("/WEB-INF/view/profile.jsp").forward(request, response);
 
       }
@@ -58,7 +54,6 @@ public class PostServlet extends HttpServlet{
       String userName = (String) request.getSession().getAttribute("user");
 
       String postContent = request.getParameter("post");
-      // this removes any HTML from the message content
       String cleanedPostContent = Jsoup.clean(postContent, Whitelist.none());
 
       Post post =
@@ -68,7 +63,7 @@ public class PostServlet extends HttpServlet{
               Instant.now(),
               cleanedPostContent);
 
-      postStore.addPost(post);
+      PostStore.getInstance().addPost(post);
       // redirect to a GET request
       response.sendRedirect("/user/" + userName);
 
