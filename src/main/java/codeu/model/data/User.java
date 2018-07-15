@@ -15,20 +15,19 @@
 package codeu.model.data;
 
 import java.text.SimpleDateFormat;
-import java.text.ParseException;
 import java.time.Instant;
 import java.util.UUID;
 
 import java.util.*;
 
-enum OccupationType{
-	STUDENT, EMPLOYED, UNEMPLOYED
-}
-
 /** Class representing a registered user. */
 public class User {
 	public enum Sex {
-		MALE, FEMALE, UNKOWN
+		MALE, FEMALE
+	}
+
+	public enum OccupationType{
+		STUDENT, EMPLOYED, UNEMPLOYED
 	}
 	
 	Set<String> admin = new HashSet<>(Arrays.asList("anAdmin", "Admin1", "Admin2","Hazim"));
@@ -58,7 +57,6 @@ public class User {
 		this.name = name;
 		this.passwordHash = passwordHash;
 		this.creation = creation;
-		this.setSex(Sex.UNKOWN);
 	}
 
 	/** Returns the ID of this User. */
@@ -85,13 +83,11 @@ public class User {
 		return admin.contains(name);
 	}
 
-	public Date getBirthday() {
-		return birthday;
-	}
-
-	public String getBirthdayAsString() {
-		SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/YYYY");
-		return sdf.format(birthday);
+	public String getBirthday(SimpleDateFormat sdf) {
+		if(birthday != null) {
+			return sdf.format(birthday);
+		} 
+		return "Birthday not set";
 	}
 
 	public void setBirthday(Date birthday) {
@@ -99,7 +95,7 @@ public class User {
 	}
 
 	public String getDescription() {
-		if(description == null) {
+		if(description == null || description.trim().equals("")) {
 			return "Description not set";
 		}
 		return description;
@@ -132,20 +128,14 @@ public class User {
 			}
 		}
 		
-		if(valueArray[0].equals("STUDENT")) {
-			Occupation out = new Occupation(
-					valueArray[1],
-					Integer.parseInt(valueArray[2])
-			);
+		if(valueArray[0].equals("UNEMPLOYED")) {
+			Occupation out = new Occupation();
 			return out;
-		} else if(valueArray[1].equals("EMPLOYED")) {
+		} else {
 			Occupation out = new Occupation(
 					valueArray[0],
 					valueArray[1]
 			);
-			return out;
-		} else {
-			Occupation out = new Occupation();
 			return out;
 		}
 	}
@@ -184,100 +174,55 @@ public class User {
 	//Inner class
 	public class Occupation {
 		private OccupationType occupationType;
-		private int schoolYear;
-		private String school;
-		private String position;
-		private String employer;
+		private String f1;
+		private String f2;
 
-		public Occupation(String school, int schoolYear){
-			this.occupationType = OccupationType.STUDENT;
-			this.school = school;
-			this.schoolYear = schoolYear;
-		}
-
-		public Occupation(String employer, String position){
+		public Occupation(String f1, String f2){
 			this.occupationType = OccupationType.EMPLOYED;
-			this.employer = employer;
-			this.position = position;
+			this.f1 = f1;
+			this.f2 = f2;
 		}
 		
 		public Occupation() {
 			this.occupationType = OccupationType.UNEMPLOYED;
 		}
 		
-		public String getOccupationType() {
-			return occupationType.toString();
+		public OccupationType getOccupationType() {
+			return occupationType;
+		}
+		
+		public String getf1() {
+			return f1;
+		}
+
+		public String getf2() {
+			return f2;
 		}
 		
 		public String toString() {
-			if(occupationType == OccupationType.STUDENT) {
-				return yearName(schoolYear) + " at " + school;
-			} else if(occupationType == OccupationType.EMPLOYED) {
-				return position + " at " + employer;
+			if(occupationType == OccupationType.UNEMPLOYED && f1 != null && f2 != null) {
+				return f1 + " at " + f2;
 			}
 			return "Unemployed";
+
 		}
 		
-		private String yearName(int year) {
-			switch(year) {
-				case 1:
-					return "Freshman";
-				case 2:
-					return "Sophmore";
-				case 3:
-					return "Junior";
-				case 4:
-					return "Senior";
-				default:
-					return "Senior";
-			}
-		}
-
 		public String storableValue() {
 			if(occupationType == null) {
 				return "null";
 			}
+			
 			String out = "";
 			
 			out += occupationType.toString();
 			
 			out += ";";
 			
-			switch(occupationType) {
-				case STUDENT:
-					if(schoolYear != 0) {
-						out += schoolYear;
-					} else {
-						out+=" ";
-					}
-					
-					out += ";";
-					
-					if(school != null || school.trim() != "") {
-						out += school;
-					} else {
-						out+=" ";
-					}
-					return out;
-
-				case EMPLOYED:
-					if(position != null || position.trim() != "") {
-						out += position;
-					} else {
-						out+=" ";
-					}
-
-					out += ";";
-
-					if(employer != null || employer.trim() != "") {
-						out += employer;
-					} else {
-						out+=" ";
-					}
-					return out;
-				default:
-					return out;
+			if(occupationType == OccupationType.STUDENT || occupationType == OccupationType.EMPLOYED) {
+				out += f1 + ";" + f2;
 			}
+			
+			return out;
 		}
 	}
 }

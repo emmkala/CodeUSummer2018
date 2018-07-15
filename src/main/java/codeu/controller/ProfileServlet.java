@@ -30,7 +30,6 @@ import com.google.appengine.api.images.ImagesServiceFactory;
 
 import codeu.model.data.User.Sex;
 import codeu.model.data.User;
-import codeu.model.data.User.Occupation;
 import codeu.model.store.basic.UserStore;
 import codeu.model.store.basic.PostStore;
 import codeu.model.store.basic.CommentStore;
@@ -50,9 +49,11 @@ public class ProfileServlet extends HttpServlet {
 	@Override
 	public void init() throws ServletException {
 		super.init();
-		userStore = UserStore.getInstance();
 		postStore = postStore.getInstance();
 		commentStore = commentStore.getInstance();
+		userStore = UserStore.getInstance();
+		//Some necessities for grabbing images
+		messageStore = messageStore.getInstance();
 		blobstoreService = BlobstoreServiceFactory.getBlobstoreService();
 		imagesService = ImagesServiceFactory.getImagesService();
 	}
@@ -64,83 +65,47 @@ public class ProfileServlet extends HttpServlet {
 		User user = userStore.getUser(profileEditName);
 		UserStore userStore = UserStore.getInstance();
 
-		try {
-			Date newBirthday = parseDate(request.getParameter("updated birthday"));
-			if(newBirthday != null) {
-				user.setBirthday(newBirthday);
-			}
-		} catch(NullPointerException e) {
-			System.out.println("Didn't set birthday");
+		//Sets the birthday from the user's form if he filled it out
+		String newBirthday = request.getParameter("updated birthday");
+		if(newBirthday != null) {
+			user.setBirthday(parseDate(newBirthday));
 		}
 
-		try {
-			String newDescription = request.getParameter("updated description");
-
-			if(!newDescription.trim().equals("")) {
-				user.setDescription(newDescription);
-			}
-		} catch(NullPointerException e) {
-			//Do nothing
+		//Sets the description from the user's form if it's been filled out
+		String newDescription = request.getParameter("updated description");
+		//Using short circuit boolean to avoid NullPointerException
+		if(newDescription != null && !newDescription.trim().equals("")) {
+			user.setDescription(newDescription);
 		}
 
-		try {
-			String newSex = request.getParameter("updated sex");
+		//Sets the sex from the user's form if it's been changed
+		String newSex = request.getParameter("updated sex");
+		if(newSex != null && !newSex.equals("default")) {
 			user.setSex(Sex.valueOf(newSex));
-		} catch(NullPointerException e) {
-			//Do nothing
 		}
 
-		try {
-			String newEmail = request.getParameter("updated email");
-			if(!newEmail.trim().equals("")) {
-				user.setEmail(newEmail);
-			}
-		} catch(NullPointerException e) {
-			//Do nothing
+		//Sets the email from the user's form if it's been filled out
+		String newEmail = request.getParameter("updated email");
+		if(newEmail != null && !newEmail.trim().equals("")) {
+			user.setEmail(newEmail);
 		}
 
-		try {
-			String workStatus = request.getParameter("updated work status");
-			if (workStatus != "default") {
-				if(workStatus.equals("employed")) {
-					String employer = request.getParameter("updated employer");
-					String position = request.getParameter("updated position");
-					if(employer != null && position != null &
-							!employer.trim().equals("") && !position.trim().equals("")) {
-						user.setOccupation(user.new Occupation(employer, position));
-					}
-				} else if (workStatus.equals("student")) {
-					String school = request.getParameter("updated school");
-					int year = Integer.parseInt(request.getParameter("updated school year"));
-					if(school != null && !school.trim().equals("") && year != 0) {
-						user.setOccupation(user.new Occupation(school, year));
-					}
-				} else  {
-					user.setOccupation(user.new Occupation());
-				}
-			}
-		} catch(NullPointerException e) {
-			System.out.println("Didn't set occupation");
-		}
-
-
+		//Sets occupation based on what the workstatus is for the user
 		String workStatus = request.getParameter("updated work status");
-		if (workStatus != null) {
-			Occupation occupation = null;
-			if(workStatus.equals("employed")) {
-				String employer = request.getParameter("updated employer");
-				String position = request.getParameter("updated position");
-				occupation = user.new Occupation(employer, position);
-			} else if (workStatus.equals("student")){
-				String school = request.getParameter("updated school");
-				int year = Integer.parseInt(request.getParameter("updated school year"));
-				occupation = user.new Occupation(school, year);
-			} else if (workStatus.equals("unemployed")) {
-				occupation = user.new Occupation();
-			} else {
-				System.out.println("Unrecongized work status");
+		if(workStatus != null  && !workStatus.equals("default")) {
+			if(!workStatus.equals("unemployed")) {
+				String f1 = request.getParameter("updated f1");
+				String f2 = request.getParameter("updated f2");
+				if(f1 != null && f2 != null &
+						!f1.trim().equals("") && !f2.trim().equals("")) {
+					System.out.println("set occ");
+					user.setOccupation(user.new Occupation(f1,f2));
+				} else {
+					//Make them redo the form
+				}
+			} else  {
+				user.setOccupation(user.new Occupation());
 			}
-			user.setOccupation(occupation);
 		}
 
 		userStore.updateUser(user);
@@ -150,8 +115,9 @@ public class ProfileServlet extends HttpServlet {
 
 	@Override
 	public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
+		//Gets the user name from the URL
 		String profileRequestName = getNameFromURL(request.getRequestURL());
-
+		//Checks to make sure the page requested is a valid username
 		if (!userStore.isUserRegistered(profileRequestName)) {
 			response.sendRedirect("../404.html");
 			return;
@@ -162,18 +128,6 @@ public class ProfileServlet extends HttpServlet {
 
 		List<Post> allUsersPosts = postStore.getPostsByUserID(currentUserID);
 		request.setAttribute("usersPosts", allUsersPosts);
-
-
-		/*
-		Image displayedImage;
-		if(user.getProfileImage() == null) {
-			displayedImage = defaultImage;
-		} else {
-			displayedImage = user.getProfileImage();
-		}
-
-		request.setAttribute("image", displayedImage);
-		*/
 
 		if (!userStore.isUserRegistered(profileRequestName)) {
 			response.sendRedirect("../404.html");
@@ -193,6 +147,7 @@ public class ProfileServlet extends HttpServlet {
 		request.getRequestDispatcher("/WEB-INF/view/profile.jsp").forward(request, response);
 	}
 
+	//A method I'm using to parse dates from String to Date
 	private Date parseDate(String in) {
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 		Date out;
@@ -206,6 +161,7 @@ public class ProfileServlet extends HttpServlet {
 		return out;
 	}
 
+	//A method I'm using to get the name given either a relative or absolute URL
 	private String getNameFromURL(StringBuffer URL) {
 		String URL_String = URL.toString();
 		int usernameStartIndex = URL_String.indexOf("/user/");
