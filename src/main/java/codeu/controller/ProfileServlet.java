@@ -122,12 +122,7 @@ public class ProfileServlet extends HttpServlet {
 
 		request.setAttribute("totalMessages", allMessages);
 
-		
-		if (!userStore.isUserRegistered(profileRequestName)) {
-			response.sendRedirect("../404.html");
-			return;
-		}
-				request.setAttribute("blobstoreService", blobstoreService);
+		request.setAttribute("blobstoreService", blobstoreService);
 
 		request.setAttribute("requestedProfile", profileRequestName);
 

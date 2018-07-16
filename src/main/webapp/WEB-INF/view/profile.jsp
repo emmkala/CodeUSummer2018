@@ -15,7 +15,7 @@
 <head>
 <title>Profile</title>
 <link rel="stylesheet" href="/css/main.css">
-<%    
+<%
    String requestedProfile = (String) request.getAttribute("requestedProfile");
    User user = UserStore.getInstance().getUser(requestedProfile);
  	boolean canEdit = (boolean) request.getAttribute("canEdit");
@@ -25,8 +25,8 @@
        var workStatus = document.getElementById("workStatus");
        var occupationField1 = document.getElementById("OF1");
        var occupationField2 = document.getElementById("OF2");
- 
-       
+
+
        if(workStatus.value != "unemployed" && workStatus.value != "default"){
     	   occupationField1.style.display = "block";
     	   occupationField2.style.display = "block";
@@ -35,22 +35,22 @@
     		   document.getElementById("OF2YearSelect").style.display = "block";
     		   document.getElementById("OF2PositionSection").style.display = "none";
     		   document.getElementById("OF2YearInput").name = "updated f2";
-    		   document.getElementById("OF2PositionInput").name = ""; 
+    		   document.getElementById("OF2PositionInput").name = "";
     	   }
     	   if(workStatus.value == "employed"){
     		   document.getElementById("OF1Header").innerHTML = "Employer";
     		   document.getElementById("OF2YearSelect").style.display = "none";
     		   document.getElementById("OF2PositionSection").style.display = "block";
     		   document.getElementById("OF2YearInput").name = "";
-    		   document.getElementById("OF2PositionInput").name = "updated f2"; 
+    		   document.getElementById("OF2PositionInput").name = "updated f2";
     	   }
-           
+
        } else {
     	   occupationField1.style.display = "none";
     	   occupationField2.style.display = "none";
        }
      }
-     	
+
 
 	function removeDefault(elem) {
 		var options = elem.childNodes;
@@ -61,7 +61,7 @@
 			}
 		}
 	}
-	
+
 	function reflectCurrentValues(){
 		<%if(user.getOccupation() == null) {%>
 			document.getElementById("workStatus").value = "default";
@@ -81,6 +81,10 @@
 		<a id="navTitle" href="/">CodeU Chat App</a> <a href="/conversations">Conversations</a>
 		<% if(request.getSession().getAttribute("user") != null){ %>
 			<a>Hello <%=request.getSession().getAttribute("user") %>!</a>
+			<a href="/profile">My Profile</a>
+			  <% if (request.getAttribute("isAdmin") != null) { %>
+                                  <a href="/admin">Admin</a>
+                     <% } %>
 		<% } else{ %>
 			<a href="/login">Login</a>
 		<% } %>
@@ -97,24 +101,24 @@
 		<img src=<%=user.getProfileImage().getURL()%> height = "150" width = "150">
 		<span><%=user.getName()%>'s Profile</span>
 		<div> <%=user.getOccupation()%> </div>
-		
+
 		<hr/>
-		
+
 		<div> About <%=user.getName()%></div>
 		<p><%= user.getDescription() %></p>
 
 		<br>
-	
+
 		<span>Sex : </span>
 		<span><%= user.getSex().toString().substring(0,1) + user.getSex().toString().substring(1).toLowerCase()%></span>
-		
+
 		<br>
-		
+
 		<span>Email : </span>
 		<span><%= user.getEmail()%></span>
-				
+
 		<br>
-	
+
 		<span>Birthday : </span>
 		<span><%=user.getBirthday(new SimpleDateFormat("MM-dd-yyyy"))%></span>
 
@@ -136,9 +140,9 @@
 	<%} else {%>
 		<%BlobstoreService blobstoreService = (BlobstoreService) request.getAttribute("blobstoreService");%>
 		<img src=<%=user.getProfileImage().getURL()%> height = "150" width = "200">
-		
+
 		<span>Your profile</span>
-		
+
 		<form action=<%=blobstoreService.createUploadUrl("/upload")%> method="POST" enctype="multipart/form-data">
 			<input type="file" name="profileImage">
 			<input type="submit" value="Upload Image">
@@ -161,17 +165,17 @@
 		<form action="/user/<%=requestedProfile%>" method="POST">
 			<div>About Me</div>
 			<input name="updated description" type="text" value="<%=user.getDescription()%>">
-	
+
 			<br>
 			<br>
-	
+
 			<span>Birthday : </span>
-			<input name="updated birthday" type="date" value=<%=user.getBirthday(new SimpleDateFormat("yyyy-MM-dd"))%>> 
-			
+			<input name="updated birthday" type="date" value=<%=user.getBirthday(new SimpleDateFormat("yyyy-MM-dd"))%>>
+
 			<br>
 			<br>
-	
-			<span>Sex : </span> 
+
+			<span>Sex : </span>
 			<select name="updated sex" onload="setDefault(this)">
 				<%if(user.getSex() == User.Sex.MALE) {%>
 					<option value="MALE" selected> Male</option>
@@ -179,7 +183,7 @@
 				<%} else if (user.getSex() == User.Sex.FEMALE) {%>
 					<option value="MALE"> Male</option>
 					<option value="FEMALE" selected>Female</option>
-				<%} else {%>					
+				<%} else {%>
 					<option value="default" disabled selected>  -- select an option -- </option>
 					<option value="MALE"> Male</option>
 					<option value="FEMALE">Female</option>
@@ -192,12 +196,12 @@
 			<span>Email : </span>
 			<input name="updated email" type="text" value="<%=user.getEmail()%>">
 <<<<<<< HEAD
-	
-			<script> 
+
+			<script>
 				reflectCurrentValues();
 				updateFieldVisibility();
 			</script>
-		
+
 			<h2>Work Status:</h2>
 			<select name="updated work status" id="workStatus" onload="updateFieldVisibility()" onchange="updateFieldVisibility()" onclick = "removeDefault(this);">
 				<option disabled value="default"> -- select an option -- </option>
@@ -205,16 +209,16 @@
 				<option value="unemployed">Unemployed</option>
 				<option value="student">Student</option>
 			</select>
-	        
+
 	        <script>
-				
+
 			</script>
-	        
+
 	        <div id="OF1" style="display:none">
 	        	<div id="OF1Header">Job Position</div>
 	        	<input name="updated f1" type="text">
 			</div>
-	        
+
 	        <div id="OF2" style="display:none">
 				<div id="OF2YearSelect">
 		        	<h3>Year</h3>

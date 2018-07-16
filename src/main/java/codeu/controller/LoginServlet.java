@@ -83,7 +83,11 @@ public class LoginServlet extends HttpServlet {
       return;
     }
 
+    String adminStatus = user.checkAdmin()? "yes" : "no";
+
+
     request.getSession().setAttribute("user", username);
+    request.getSession().setAttribute("isAdmin", adminStatus);
     response.sendRedirect("/conversations");
   }
 }

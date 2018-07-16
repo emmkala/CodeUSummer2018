@@ -9,15 +9,16 @@
 		<a id="navTitle" href="/">CodeU Chat App</a> <a href="/conversations">Conversations</a>
 		<% if(request.getSession().getAttribute("user") != null){ %>
 			<a>Hello <%= request.getSession().getAttribute("user") %>!</a>
+			<a href="/profile">My Profile</a>
 		<% } else{ %>
 			<a href="/login">Login</a>
 		<% } %>
-		<a href="/about.jsp">About</a> <a href="/admin">Admin</a>
+		<a href="/admin">Admin</a>
+		<a href="/about.jsp">About</a>
 	</nav>
 	<%boolean isAdmin = (Boolean) request.getAttribute("isAdmin");%>
 	<%if(isAdmin){%>
 		<h1>Administration</h1>
-		<p>This is the admin page</p>
 		<h2>Site Statistics</h2>
 		<p>Here are some site stats:</p>
 		<ul>
