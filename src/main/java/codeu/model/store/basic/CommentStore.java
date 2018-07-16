@@ -3,13 +3,22 @@ package codeu.model.store.basic;
 import codeu.model.data.Comment;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.*;
 import java.util.UUID;
 import codeu.model.store.persistence.PersistentStorageAgent;
+import java.util.stream.Collectors;
+import java.util.HashMap;
+import java.util.Stack;
 
 public class CommentStore {
 
     private static CommentStore instance;
+
+    public static CommentStore getInstance() {
+        if (instance == null) {
+            instance = new CommentStore (PersistentStorageAgent.getInstance());
+        }
+        return instance;
+    }
 
     public static CommentStore getTestInstance(PersistentStorageAgent persistentStorageAgent) {
         return new CommentStore(persistentStorageAgent);
@@ -25,7 +34,7 @@ public class CommentStore {
     }
 
     public List<Comment> getAllComment() {
-        return commentList;
+        return instance.loadComments();
     }
 
     public void addComment(Comment comment) {
@@ -33,7 +42,7 @@ public class CommentStore {
         persistentStorageAgent.writeThrough(comment);
     }
 
-    public Map<Comment, List<List<Comment>>> getAllCommentsInPost(UUID postId) {
+    /**public Map<Comment, List<List<Comment>>> getAllCommentsInPost(UUID postId) {
         Map<Comment, List<List<Comment>>> commentInPost = new HashMap<>();
         for (Comment comment : commentList) {
             //add comment when the postId is the same as the given ID
@@ -69,5 +78,40 @@ public class CommentStore {
             }
         }
         return commentInPost;
+    }**/
+
+    public List<Comment> getAllCommentsInPost(UUID postId) {
+
+        // gets all comments with same postId into a list
+        List<Comment> allCommentsInPost = instance.getCommentsForPost(postId).
+                stream().filter(comment -> comment.getPostId() == postId).collect(Collectors.toList());
+
+        //separates them into ancestors and children
+        List<Comment> ancestors = allCommentsInPost.stream().filter(comment -> comment.getParentId() == null)
+                .collect(Collectors.toList());
+        List<Comment> children = allCommentsInPost.stream().filter(comment -> comment.getParentId() != null)
+                .collect(Collectors.toList());
+
+        //sorts all the chilren based on the corresponding parentId into a hash map
+        HashMap<UUID, List<Comment>> hmap = new HashMap<>();
+        for (Comment child: children){
+            UUID parentid = child.getParentId();
+            List<Comment> nested = hmap.containsKey(parentid) ? hmap.get(parentid): new ArrayList<>();
+            nested.add(child);
+            nested.put(parentid, nested);
+        }
+
+        Stack<Comment> commentStack = Stack<>();
+        commentStack.addAll(ancestors);
+
+        while (!commentStack.isEmpty()){
+            Comment comment = commentStack.pop();
+            if (hmap.containsKey(comment.getId())){
+                comment.setChildren(hmap.get(comment.getId()));
+                List<Comment> children = comment.getChildren();
+                commentStack.addAll(children);
+            }
+        }
+        return ancestors;
     }
 }
