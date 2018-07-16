@@ -3,6 +3,7 @@ package codeu.model.data;
 import java.util.UUID;
 import java.time.Instant;
 import java.util.List;
+import java.util.ArrayList;
 
 public class Comment {
 

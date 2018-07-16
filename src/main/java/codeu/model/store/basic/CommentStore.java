@@ -8,6 +8,7 @@ import codeu.model.store.persistence.PersistentStorageAgent;
 import java.util.stream.Collectors;
 import java.util.HashMap;
 import java.util.Stack;
+import java.util.Map;
 
 public class CommentStore {
 
@@ -33,8 +34,8 @@ public class CommentStore {
         commentList = new ArrayList<>();
     }
 
-    public List<Comment> getAllComment() {
-        return instance.loadComments();
+    public List<Comment> getAllComment() throws Exception {
+        return persistentStorageAgent.loadComments();
     }
 
     public void addComment(Comment comment) {
@@ -80,10 +81,10 @@ public class CommentStore {
         return commentInPost;
     }**/
 
-    public List<Comment> getAllCommentsInPost(UUID postId) {
+    public List<Comment> getAllCommentsInPost(UUID postId) throws Exception {
 
         // gets all comments with same postId into a list
-        List<Comment> allCommentsInPost = instance.getCommentsForPost(postId).
+        List<Comment> allCommentsInPost = persistentStorageAgent.getCommentsForPost(postId).
                 stream().filter(comment -> comment.getPostId() == postId).collect(Collectors.toList());
 
         //separates them into ancestors and children
@@ -93,23 +94,23 @@ public class CommentStore {
                 .collect(Collectors.toList());
 
         //sorts all the chilren based on the corresponding parentId into a hash map
-        HashMap<UUID, List<Comment>> hmap = new HashMap<>();
+        Map<UUID, List<Comment>> hmap = new HashMap<>();
         for (Comment child: children){
             UUID parentid = child.getParentId();
             List<Comment> nested = hmap.containsKey(parentid) ? hmap.get(parentid): new ArrayList<>();
             nested.add(child);
-            nested.put(parentid, nested);
+            hmap.put(parentid, nested);
         }
 
-        Stack<Comment> commentStack = Stack<>();
+        Stack<Comment> commentStack = new Stack<>();
         commentStack.addAll(ancestors);
 
         while (!commentStack.isEmpty()){
             Comment comment = commentStack.pop();
-            if (hmap.containsKey(comment.getId())){
+            if (hmap.containsKey(comment.getId())) {
                 comment.setChildren(hmap.get(comment.getId()));
-                List<Comment> children = comment.getChildren();
-                commentStack.addAll(children);
+                List<Comment> commentChildren = comment.getChildren();
+                commentStack.addAll(commentChildren);
             }
         }
         return ancestors;
