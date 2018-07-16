@@ -327,7 +327,7 @@ public class PersistentDataStore {
       datastore.put(commentEntity);
   }
   
-  public List<Post> getPostsForUser(String userId){
+  public List<Post> getPostsForUser(UUID userId){
 	  Filter filter = new FilterPredicate("owner_uuid", FilterOperator.EQUAL, userId);
 	  Query query = new Query("posts").setFilter(filter);
 	  PreparedQuery pq = datastore.prepare(query);
@@ -343,7 +343,7 @@ public class PersistentDataStore {
 	  return out;
   }
   
-  public List<Comment> getCommentsForPost(String postId){
+  public List<Comment> getCommentsForPost(UUID postId){
 	  Filter filter = new FilterPredicate("post_uuid", FilterOperator.EQUAL, postId);
 	  Query query = new Query("comments").setFilter(filter);
 	  PreparedQuery pq = datastore.prepare(query);
