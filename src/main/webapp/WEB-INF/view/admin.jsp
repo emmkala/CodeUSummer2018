@@ -5,17 +5,11 @@
 <link rel="stylesheet" href="/css/main.css">
 </head>
 <body>
-	<nav>
-		<a id="navTitle" href="/">CodeU Chat App</a> <a href="/conversations">Conversations</a>
-		<% if(request.getSession().getAttribute("user") != null){ %>
-			<a>Hello <%= request.getSession().getAttribute("user") %>!</a>
-			<a href="/profile">My Profile</a>
-		<% } else{ %>
-			<a href="/login">Login</a>
-		<% } %>
-		<a href="/admin">Admin</a>
-		<a href="/about.jsp">About</a>
-	</nav>
+	    <jsp:include page="/WEB-INF/view/navbar.jsp">
+            <jsp:param name="user" value="<%=request.getSession().getAttribute(\"user\")%>"/>
+            <jsp:param name="isAdmin" value="<%=request.getSession().getAttribute(\"isAdmin\")%>"/>
+        </jsp:include>
+        
 	<%boolean isAdmin = (Boolean) request.getAttribute("isAdmin");%>
 	<%if(isAdmin){%>
 		<h1>Administration</h1>

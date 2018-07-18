@@ -24,22 +24,11 @@
 </head>
 <body>
 
-  <nav>
-    <a id="navTitle" href="/">CodeU Chat App</a>
-    <a href="/conversations">Conversations</a>
-    <% if(request.getSession().getAttribute("user") != null){ %>
-      <a>Hello <%= request.getSession().getAttribute("user") %>!</a>
-      <a href="/profile">My Profile</a>
-       <% if (request.getAttribute("isAdmin") != null) { %>
-                        <a href="/admin">Admin</a>
-          <% } %>
-    <% } else{ %>
-      <a href="/login">Login</a>
-    <% } %>
-    <a href="/about.jsp">About</a>
+    <jsp:include page="/WEB-INF/view/navbar.jsp">
+        <jsp:param name="user" value="<%=request.getSession().getAttribute(\"user\")%>"/>
+        <jsp:param name="isAdmin" value="<%=request.getSession().getAttribute(\"isAdmin\")%>"/>
+    </jsp:include>
 
-
-  </nav>
 
   <div id="container">
 
