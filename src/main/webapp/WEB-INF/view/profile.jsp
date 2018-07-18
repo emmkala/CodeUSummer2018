@@ -105,30 +105,38 @@
 </nav>
 
 	<%if(!canEdit) {%>
-		<img src=<%=user.getProfileImage().getURL()%> height = "150" width = "150">
-		<span><%=user.getName()%>'s Profile</span>
-		<div> <%=user.getOccupation()%> </div>
+
+		<p style="text-align:center;"> <img src="<%=user.getProfileImage().getURL()%>" height=150 width=150> </p>
+		<h6><%=user.getName()%>'s Profile</h6>
+		<h6> <%=user.getOccupation()%> </h6>
+    <style> h6{text-align: center;} </style>
+
 
 		<hr/>
 
-		<div class="card border-info mb-3" style="max-width: 32rem;">
-	  	<div class="card-header">About <%=user.getName()%></div>
-	  		<div class="card-body">
-	    		<p class="card-text"><%= user.getDescription() %></p>
-	  		</div>
-		</div>
+  <div class="card-deck">
+    <div class="card">
+      <div class="card border-info mb-3" style="max-width: 65rem;">
+        <div class="card-body"></div>
+        <div class="card-header">About <%=user.getName()%></div>
+        	 <p class="card-text"> &nbsp <%= user.getDescription() %></p>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card border-info mb-3" style="max-width: 65rem;">
+        <div class="card-body"></div>
+        <div class="card-header">General Informaion</div>
+        	 <p class="card-text">
+ 					&emsp; Email : <%= user.getEmail()%>
+ 					&emsp; &nbsp Birthday : <%=user.getBirthday(new SimpleDateFormat("MM-dd-yyyy"))%></p>
+      </div>
+      </div>
+    </div>
 
-		<div class="card border-info mb-3" style="max-width: 32rem;">
-	  	<div class="card-header">General Informaion</div>
-	  		<div class="card-body">
-	    		<p class="card-text"> Sex : <%= user.getSex().toString().substring(0,1) + user.getSex().toString().substring(1).toLowerCase()%>
-					Email : <%= user.getEmail()%>
-					Birthday : <%=user.getBirthday(new SimpleDateFormat("MM-dd-yyyy"))%>
-					</p>
-	  		</div>
-		</div>
 
 		<h4><%=user.getName()%>'s Post's</h4>
+    <style> h4{ text-align:center; } </style>
+
 		<% List<Post> everyPost = (List<Post>) request.getAttribute("usersPosts");
 		List<Comment> everyComment = (List<Comment>) request.getAttribute("totalComments"); %>
 
@@ -148,8 +156,7 @@
 				<form action="/comment?post_id=<%= post.getId() %>&user=<%user.getName();%>">
 				<input type="text" name="content" placeholder="Comment on This Post!"> <br />
 				<button type="submit">Send</button>
-
-			</form>
+			   </form>
 
 		<% }
 		} %>
@@ -200,95 +207,7 @@
 
 			<span>Email : </span>
 			<input name="updated email" type="text" value="<%=user.getEmail()%>">
-<!--
-			<option value="student">Student</option>
 
-			</select>
-
-	        <div id="schoolField">
-	        	<h3>High School/University</h3>
-	        	<input name="updated school name" type="text" name="school">
-			</div>
-
-	        <div id="schoolYearField">
-	        	<h3>Year</h3>
-	        	<select name="updated school year">
-	            	<option value=1>Freshman</option>
-	                <option value=2>Sophmore</option>
-	        		<option value=3>Junior</option>
-	                <option value=4>Senior</option>
-	             </select>
-	        </div>
-
-	        <div id="employerField">
-	        	<h3>Employer</h3>
-	        	<input name="updated employer" type="text" name="employer">
-			</div>
-
-	        <div id="positionField">
-	        	<h3>Position</h3>
-	        	<input name="updated position" type="text" name="position">
-			</div>
-
-			<script>
-	        	function updateFields(){
-	              var workStatus = document.getElementById("workStatus");
-	              var schoolField = document.getElementById("schoolField");
-	              var schoolYearField = document.getElementById("schoolYearField");
-	              var employerField = document.getElementById("employerField");
-	              var positionField = document.getElementById("positionField");
-
-	              if(workStatus.value == "employed"){
-	              	  schoolField.style.display = "none";
-	                  schoolYearField.style.display = "none";
-	                  employerField.style.display = "block";
-	                  positionField.style.display = "block";
-
-	              }
-	              if(workStatus.value == "student"){
-	                  schoolField.style.display = "block";
-	                  schoolYearField.style.display = "block";
-	                  employerField.style.display = "none";
-	                  positionField.style.display = "none";
-	              }
-	              if(workStatus.value == "unemployed" || workStatus.value == "default"){
-	                  schoolField.style.display = "none";
-	                  schoolYearField.style.Display = "none";
-	                  employerField.style.display = "none";
-	                  positionField.style.display = "none";
-	              }
-	            }
-	            updateFields();
-
-
-
-				function removeDefault(elem) {
-					var options = elem.childNodes;
-					for (i = 0; i < options.length; i++) {
-						if (options[i].value == "default") {
-							options[i].style = "display:none";
-							break;
-						}
-					}
-				}
-
-				//This doesn't work
-				/*
-				function setStoredWorkStatus(){
-					var workStatus = document.getElementById("workStatus");
-					var currentWorkStatus = "<%=user.getOccupation().getOccupationType()%>".toLowerCase();
-					for(i = 0; i < workStatus.childNodes; i++){
-						if(workStatus.childNodes[i] == currentWorkStatus){
-							workStatus.childNodes[i].selected = "selected";
-						}
-					}
-				}
-
-				<%if(user.getOccupation() != null) {%>
-					setStoredWorkStatus();
-				<%}%>
-				*/
-				updateFields(); -->
 			<script>
 				reflectCurrentValues();
 				updateFieldVisibility();
@@ -301,39 +220,6 @@
 				<option value="unemployed">Unemployed</option>
 				<option value="student">Student</option>
 			</select>
-
-	    <!--    <div id="schoolField" style="display:none">
-	        	<h3>High School/University</h3>
-	        	<input name="updated school name" type="text" name="school">
-			</div>
-
-	        <div id="schoolYearField" style="display:none">
-	        	<h3>Year</h3>
-	        	<select name="updated school year" onchange="updateFields(); removeDefault(this)">
-	        		<option disabled selected value="default"> -- select an option -- </option>
-	        	    <option style="display:none;" disabled selected value="0"> -- select an option -- </option>
-	            	<option value=1>Freshman</option>
-	                <option value=2>Sophmore</option>
-	        		<option value=3>Junior</option>
-	                <option value=4>Senior</option>
-	             </select>
-	        </div>
-
-	        <div id="employerField" style="display:none">
-	        	<h3>Employer</h3>
-	        	<input name="updated employer" type="text" name="employer">
-			</div>
-
-	        <div id="positionField" style="display:none">
-	        	<h3>Position</h3>
-	        	<input name="updated position" type="text" name="position">
-			</div>
-
-			<br>
-			<br> -->
-	        <script>
-
-			</script>
 
 	        <div id="OF1" style="display:none">
 	        	<div id="OF1Header">Job Position</div>
@@ -363,6 +249,7 @@
 			<input type="text" name="post" placeholder="Post about any topic you want!">
 			<button type="submit">Send</button>
 			</form>
+      </form>
 
 			<h4> Your Posts </h4>
 

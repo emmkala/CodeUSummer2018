@@ -131,7 +131,8 @@ List<Message> messages = (List<Message>) request.getAttribute("messages");
 				  String authorName = UserStore.getInstance()
 				    .getUser(message.getAuthorId()).getName();
 				  User author = UserStore.getInstance().getUser(authorName);
-				%>
+          %>
+          <p><%=message.getContent()%></p>
 					<li>
 						<!-- Creates a pop-up that comes up when you hover over a person's name -->
 						<span class="author">

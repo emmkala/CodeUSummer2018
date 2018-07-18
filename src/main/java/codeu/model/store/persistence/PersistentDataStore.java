@@ -216,7 +216,7 @@ public class PersistentDataStore {
 		userEntity.setProperty("creation_time", user.getCreationTime().toString());
 		userEntity.setProperty("birthday", user.getBirthday(new SimpleDateFormat("yyyy-MM-dd")));
 		userEntity.setProperty("description", user.getDescription());
-		userEntity.setProperty("sex", user.getSex().toString());
+		//userEntity.setProperty("sex", user.getSex().toString());
 		userEntity.setProperty("email", user.getEmail());
 		userEntity.setProperty("occupation", user.getOccupation().storableValue());
 		userEntity.setProperty("profile_image", user.getProfileImage().getURL());
