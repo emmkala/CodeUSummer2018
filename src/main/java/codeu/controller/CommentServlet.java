@@ -13,6 +13,7 @@ import codeu.model.data.Post;
 import codeu.model.data.Comment;
 import codeu.model.store.basic.UserStore;
 import codeu.model.store.basic.CommentStore;
+import codeu.model.store.basic.PostStore;
 import codeu.model.store.persistence.PersistentStorageAgent;
 import org.jsoup.Jsoup;
 import org.jsoup.safety.Whitelist;
@@ -20,12 +21,14 @@ import org.jsoup.safety.Whitelist;
 public class CommentServlet extends HttpServlet{
   private CommentStore commentStore;
   private UserStore userStore;
+  private PostStore postStore;
 
   @Override
   public void init() throws ServletException{
     super.init();
     commentStore = CommentStore.getInstance();
     userStore = UserStore.getInstance();
+    postStore = PostStore.getInstance();
   }
 
   @Override
@@ -39,9 +42,11 @@ public class CommentServlet extends HttpServlet{
 public void doPost(HttpServletRequest request, HttpServletResponse response)
       throws IOException, ServletException {
 
-        String postId = request.getParameter("post_id");
+        String stringPostId = request.getParameter("post_id");
         String content = request.getParameter("content");
         String user = request.getParameter("user");
+
+        UUID postId = UUID.fromString(stringPostId);
 
         String cleanedCommentContent = Jsoup.clean(content, Whitelist.none());
 
@@ -50,7 +55,7 @@ public void doPost(HttpServletRequest request, HttpServletResponse response)
                 UUID.randomUUID(),
                 userStore.getUser(user).getId(),
                 Instant.now(),
-                UUID.randomUUID(),
+                postId,
                 UUID.randomUUID(),
                 cleanedCommentContent);
 

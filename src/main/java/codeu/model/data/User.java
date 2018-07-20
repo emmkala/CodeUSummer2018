@@ -29,9 +29,9 @@ public class User {
 	public enum OccupationType{
 		STUDENT, EMPLOYED, UNEMPLOYED
 	}
-	
+
 	Set<String> admin = new HashSet<>(Arrays.asList("anAdmin", "Admin1", "Admin2","Hazim"));
-	
+
 	private final UUID id;
 	private final String name;
 	private final String passwordHash;
@@ -86,8 +86,19 @@ public class User {
 	public String getBirthday(SimpleDateFormat sdf) {
 		if(birthday != null) {
 			return sdf.format(birthday);
-		} 
+		}
 		return "Birthday not set";
+	}
+
+	public Date getBirthdayAsString(){
+		return birthday;
+	}
+
+	public Date getBirthday(){
+		if(birthday != null){
+			return birthday;
+		}
+		return null;
 	}
 
 	public void setBirthday(Date birthday) {
@@ -115,19 +126,19 @@ public class User {
 	public void setOccupation(Occupation occupation) {
 		this.occupation = occupation;
 	}
-	
+
 	public Occupation parseOccupation(String occupationString) {
 		if(occupationString.equals("null")) {
 			return null;
 		}
-		
+
 		String[] valueArray = occupationString.split(";");
 		for(String value : valueArray) {
 			while(value.indexOf(-1) != -1) {
 				value = value.substring(0,value.indexOf(";")) + value.substring(value.indexOf(";")+1);
 			}
 		}
-		
+
 		if(valueArray[0].equals("UNEMPLOYED")) {
 			Occupation out = new Occupation();
 			return out;
@@ -139,7 +150,7 @@ public class User {
 			return out;
 		}
 	}
-	
+
 	public ProfileImage getProfileImage() {
 		if(profileImage == null) {
 			return ProfileImage.getDefaultImage(sex);
@@ -170,7 +181,7 @@ public class User {
 		this.email = email;
 	}
 
-	
+
 	//Inner class
 	public class Occupation {
 		private OccupationType occupationType;
@@ -182,15 +193,15 @@ public class User {
 			this.f1 = f1;
 			this.f2 = f2;
 		}
-		
+
 		public Occupation() {
 			this.occupationType = OccupationType.UNEMPLOYED;
 		}
-		
+
 		public OccupationType getOccupationType() {
 			return occupationType;
 		}
-		
+
 		public String getf1() {
 			return f1;
 		}
@@ -198,7 +209,7 @@ public class User {
 		public String getf2() {
 			return f2;
 		}
-		
+
 		public String toString() {
 			if(occupationType == OccupationType.UNEMPLOYED && f1 != null && f2 != null) {
 				return f1 + " at " + f2;
@@ -206,22 +217,22 @@ public class User {
 			return "Unemployed";
 
 		}
-		
+
 		public String storableValue() {
 			if(occupationType == null) {
 				return "null";
 			}
-			
+
 			String out = "";
-			
+
 			out += occupationType.toString();
-			
+
 			out += ";";
-			
+
 			if(occupationType == OccupationType.STUDENT || occupationType == OccupationType.EMPLOYED) {
 				out += f1 + ";" + f2;
 			}
-			
+
 			return out;
 		}
 	}

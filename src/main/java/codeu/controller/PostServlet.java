@@ -68,14 +68,5 @@ public class PostServlet extends HttpServlet{
       response.sendRedirect("/user/" + userName);
 
     }
-    private String getNameFromURL(StringBuffer URL) {
-  		String URL_String = URL.toString();
-  		int usernameStartIndex = URL_String.indexOf("/user/");
-  		usernameStartIndex += "/user/".length();
-  		return URL_String.substring(usernameStartIndex);
-  	}
-
-
-
 
 }
