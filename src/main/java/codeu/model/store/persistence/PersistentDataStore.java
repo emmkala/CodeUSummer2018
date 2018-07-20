@@ -327,6 +327,7 @@ public class PersistentDataStore {
       datastore.put(commentEntity);
   }
 
+
   public List<Post> getPostsForUser(String userId){
 	  Filter filter = new FilterPredicate("owner_uuid", FilterOperator.EQUAL, userId);
 	  Query query = new Query("posts").setFilter(filter);
@@ -359,7 +360,5 @@ public class PersistentDataStore {
 	  }
 
 	  return out;
-  	}
-  //public void clearData() { }
-
+  }
 }

@@ -21,7 +21,7 @@ import codeu.model.data.Comment;
 import codeu.model.data.Post;
 import codeu.model.store.persistence.PersistentDataStore;
 import java.util.List;
-
+import java.util.UUID;
 /**
  * This class is the interface between the application and PersistentDataStore, which handles
  * interactions with Google App Engine's Datastore service. Currently this class simply passes
@@ -114,8 +114,11 @@ public class PersistentStorageAgent {
     return persistentDataStore.loadComments();
   }
 
-  public List<Post> getPostsForUser(String uID){
-    return persistentDataStore.getPostsForUser(uID);
+  public List<Post> getPostsForUser(String userId) {
+    return persistentDataStore.getPostsForUser(userId);
+  }
+  public List<Comment> getCommentsForPost(String postId) throws PersistentDataStoreException {
+    return persistentDataStore.getCommentsForPost(postId);
   }
 
   public void clearData() {
@@ -126,10 +129,5 @@ public class PersistentStorageAgent {
   public void writeThrough(Post post) {persistentDataStore.writeThrough(post);}
 
   public void writeThrough(Comment comment) {persistentDataStore.writeThrough(comment);}
-
-  /*public void clearData() {
-    persistentDataStore.clearData();
-    return;
-  }*/
 
 }
