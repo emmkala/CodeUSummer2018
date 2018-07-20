@@ -50,8 +50,9 @@
  	%>
 
 	<% if(canEdit) {%>
+    <div align="center">
 		<img src=<%=user.getProfileImage().getURL()%> height = "250" width = "250">
-		<h1>Your profile</h1>
+		<h3>Your profile</h3>
 		<%BlobstoreService blobstoreService = (BlobstoreService) request.getAttribute("blobstoreService");%>
 		<form action=<%=blobstoreService.createUploadUrl("/upload")%> method="POST" enctype="multipart/form-data">
 			<input type="file" name="profileImage">
@@ -60,19 +61,19 @@
   </form>
 
 		<form action="/user/<%=requestedProfile%>" method="POST">
-			<h2>Edit About Me</h2>
 
-			<p>About Me:</p>
-			<input name="updated description" type="text"
-				value="<%=user.getDescription()%>" width="300" height="200">
+			<h5>About Me:</h5>
+      <div class="form-group">
+  			<input style= "background-color: #c1e1dd" class="form-control" id="inputDefault" placeholder="Edit your About Me!" name="updated description" type="text"
+  				value="<%=user.getDescription()%>" width="300" height="200">
+  			<br>
 
+  			<input stlye="background-color: #c1e1dd" class="form-control" id="inputDefault" name="updated description" type="text" value="<%=user.getDescription()%>">
+      </div>
 			<br>
-			<input name="updated description" type="text" value="<%=user.getDescription()%>">
-
-			<br>
 			<br>
 
-			<h2>Edit Birthday</h2>
+			<h5>Edit Birthday</h5>
 			<%if(user.getBirthday() == null) {%>
 				<p>Birthday not set</p>
 			<%} else {%>
@@ -85,7 +86,8 @@
 			<br>
 
 			<h5>Sex: </h5>
-			<select name="updated sex">
+      <div class="form-group">
+			<select class="form-control" id="exampleSelect1" name="updated sex">
 				<option value="MALE">Male</option>
 				<option value="FEMALE">Female</option>
 			</select>
@@ -93,36 +95,32 @@
 			<br>
 			<br>
 
-			<p>Email:</p>
-			<input name="updated email" type="text" value="<%=user.getEmail()%>">
-
-			<option value="student">Student</option>
-
-			</select>
+			<h5>Email:</h5>
+			<input style= "background-color: #c1e1dd" class="form-control" id="inputDefault" name="updated email" type="text" value="<%=user.getEmail()%>">
 
 	        <div id="schoolField">
 	        	<h5>High School/University</h5>
-	        	<input name="updated school name" type="text" name="school">
+	        	<input  style="background-color: #c1e1dd" class="form-control" id="inputDefault" name="updated school name" type="text" name="school">
 			</div>
 
 	        <div id="schoolYearField">
 	        	<h5>Year</h5>
-	        	<select name="updated school year">
+	        	<select class="form-control" id="exampleSelect1" name="updated school year">
 	            	<option value=1>Freshman</option>
-	                <option value=2>Sophmore</option>
-	        		<option value=3>Junior</option>
-	                <option value=4>Senior</option>
-	             </select>
+	              <option value=2>Sophmore</option>
+	        		  <option value=3>Junior</option>
+	              <option value=4>Senior</option>
+	           </select>
 	        </div>
 
 	        <div id="employerField">
 	        	<h5>Employer</h5>
-	        	<input name="updated employer" type="text" name="employer">
+	        	<input class="form-control" id="inputDefault" name="updated employer" type="text" name="employer">
 			</div>
 
 	        <div id="positionField">
 	        	<h5>Position</h5>
-	        	<input name="updated position" type="text" name="position">
+	        	<input class="form-control" id="inputDefault" name="updated position" type="text" name="position">
 			</div>
 
 			<script>
@@ -187,7 +185,7 @@
 			</script>
 
 			<h5>Work Status:</h5>
-			<select name="updated work status" id="workStatus" onchange="updateFields(); removeDefault(this);">
+			<select class="form-control" id="exampleSelect1" name="updated work status" id="workStatus" onchange="updateFields(); removeDefault(this);">
 				<option disabled selected value="default"> -- select an option -- </option>
 				<option value="employed">Employed</option>
 				<option value="unemployed">Unemployed</option>
@@ -196,12 +194,12 @@
 
 	        <div id="schoolField" style="display:none">
 	        	<h5>High School/University</h5>
-	        	<input name="updated school name" type="text" name="school">
+	        	<input class="form-control" id="inputDefault" name="updated school name" type="text" name="school">
 			</div>
 
 	        <div id="schoolYearField" style="display:none">
 	        	<h5>Year</h5>
-	        	<select name="updated school year" onchange="updateFields(); removeDefault(this)">
+	        	<select class="form-control" id="exampleSelect1" name="updated school year" onchange="updateFields(); removeDefault(this)">
 	        		<option disabled selected value="default"> -- select an option -- </option>
 	        	    <option style="display:none;" disabled selected value="0"> -- select an option -- </option>
 	            	<option value=1>Freshman</option>
@@ -213,18 +211,19 @@
 
 	        <div id="employerField" style="display:none">
 	        	<h5>Employer</h5>
-	        	<input name="updated employer" type="text" name="employer">
+	        	<input class="form-control" id="inputDefault" name="updated employer" type="text" name="employer">
 			</div>
 
 	        <div id="positionField" style="display:none">
 	        	<h5>Position</h5>
-	        	<input name="updated position" type="text" name="position">
+	        	<input class="form-control" id="inputDefault" name="updated position" type="text" name="position">
 			</div>
 
 			<br>
-
-			<input type="submit" value="Update">
+			<input class="btn btn-outline-info" type="submit" value="Update">
 		</form>
+  </div>
+  </div>
 	<%} else {%>
       <p style="text-align:center;"> <img src="<%=user.getProfileImage().getURL()%>" height=150 width=150> </p>
       <h6><%=user.getName()%>'s Profile</h6>
@@ -254,11 +253,13 @@
 
     <%}%>
     <% if(canEdit) {%>
+    <div align="center">
     <h5> Make a Post! </h5>
     <form action="/post" method="POST">
-    <input type="text" name="post" placeholder="Post about any topic you want!">
-    <button type="submit">Send</button>
+    <textarea class="form-control" id="exampleTextArea" row="4" type="text" name="post" placeholder="Post about any topic you want!"></textarea>
+    <button class="btn btn-outline-info" type="submit">Send</button>
     </form>
+    </div>
     <br>
     <%}%>
 
@@ -281,11 +282,14 @@
           <p class="card-text"><small class="text-muted"><%=comment.getContent()%></small></p>
       <% }
     }%>
+
+      <div class="form-group">
       <form action="/comment?post_id=<%= post.getId() %>&user=<%user.getName();%>" method="POST">
-      <input type="text" name="content" placeholder="Comment on This Post!"> <br />
-      <button type="submit">Send</button>
+      <input type="text" class="form-control form-control-sm" id="inputSmall" name="content" placeholder="Comment on This Post!"> <br />
+      <button type="submit" class="btn btn-outline-secondary">Send</button>
       </form>
-    </div></div></div>
+
+    </div></div></div></div>
   <% }
   } %>
 
