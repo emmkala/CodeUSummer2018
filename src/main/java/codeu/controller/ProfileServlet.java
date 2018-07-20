@@ -125,7 +125,7 @@ public class ProfileServlet extends HttpServlet {
 		User currentUser = userStore.getUser(profileRequestName);
 		UUID currentUserID = currentUser.getId();
 
-		List<Post> allUsersPosts = postStore.getPostsByUserID(currentUserID);
+		List<Post> allUsersPosts = postStore.getPostsByUserID(currentUserID.toString());
 		request.setAttribute("usersPosts", allUsersPosts);
 
 		List<Comment> allComments  = commentStore.getAllComments();
