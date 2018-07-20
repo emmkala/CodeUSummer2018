@@ -50,7 +50,7 @@
  	%>
 
 	<% if(canEdit) {%>
-		<img src=<%=user.getProfileImage().getURL()%> height = "150" width = "200">
+		<img src=<%=user.getProfileImage().getURL()%> height = "250" width = "250">
 		<h1>Your profile</h1>
 		<%BlobstoreService blobstoreService = (BlobstoreService) request.getAttribute("blobstoreService");%>
 		<form action=<%=blobstoreService.createUploadUrl("/upload")%> method="POST" enctype="multipart/form-data">
@@ -272,17 +272,20 @@
         <p> They haven't made any posts. </p>
   <% } else { %>
     <% for(Post post : everyPost){ %>
-      <p> <%=post.getContent()%> </p>
+      <div class="card" align="center">
+      <div class="card text-white bg-info mb-3" style="max-width: 65rem;">
+      <div class="card-body">
+      <p class="card-text"> <%=post.getContent()%> </p>
       <%for(Comment comment : everyComment){
           if(comment.getPostId() == post.getId()){%>
-          <p> <%=comment.getContent()%> </p>
+          <p class="card-text"><small class="text-muted"><%=comment.getContent()%></small></p>
       <% }
     }%>
       <form action="/comment?post_id=<%= post.getId() %>&user=<%user.getName();%>" method="POST">
       <input type="text" name="content" placeholder="Comment on This Post!"> <br />
       <button type="submit">Send</button>
       </form>
-
+    </div></div></div>
   <% }
   } %>
 

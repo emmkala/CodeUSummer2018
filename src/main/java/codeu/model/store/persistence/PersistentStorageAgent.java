@@ -114,6 +114,10 @@ public class PersistentStorageAgent {
     return persistentDataStore.loadComments();
   }
 
+  public List<Post> getPostsForUser(String uID){
+    return persistentDataStore.getPostsForUser(uID);
+  }
+
   public void clearData() {
     persistentDataStore.clearData();
     return;

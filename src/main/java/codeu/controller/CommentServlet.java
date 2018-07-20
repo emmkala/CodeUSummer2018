@@ -44,7 +44,7 @@ public void doPost(HttpServletRequest request, HttpServletResponse response)
 
         String stringPostId = request.getParameter("post_id");
         String content = request.getParameter("content");
-        String user = request.getParameter("user");
+        String user = (String) request.getSession().getAttribute("user");
 
         UUID postId = UUID.fromString(stringPostId);
 
