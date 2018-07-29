@@ -65,9 +65,9 @@ List<Message> messages = (List<Message>) request.getAttribute("messages");
   </nav>
 
 	<div id="container">
-		<h1><%= conversation.getTitle() %>
+		<h3>&emsp; <%= conversation.getTitle() %>
 			<a href="" style="float: right">&#8635;</a>
-		</h1>
+		</h3>
 
 		<hr/>
 		<!--
@@ -126,26 +126,25 @@ List<Message> messages = (List<Message>) request.getAttribute("messages");
 		-->
 		<div id="chat">
 			<ul>
-				<%
-				for (Message message : messages) {
-				  String authorName = UserStore.getInstance()
-				    .getUser(message.getAuthorId()).getName();
-				  User author = UserStore.getInstance().getUser(authorName);
-          %>
-          <p><%=message.getContent()%></p>
-					<li>
+            <%
+            for (Message message : messages) {
+              String authorName = UserStore.getInstance().getUser(message.getAuthorId()).getName();
+              User author = UserStore.getInstance().getUser(authorName);
+              %>
 						<!-- Creates a pop-up that comes up when you hover over a person's name -->
+            <li>
 						<span class="author">
 						  <a href=<%="/user/"+authorName%>><%=authorName + " "%></a>
 						  <div class="popup">
 							    <img class="popup-image" src="<%=author.getProfileImage().getURL()%>">
 							    <div class="popup-text">
-								    <h3 class="popup-name"> <%=authorName%> </h3>
+								    <h6 class="popup-name"> <%=authorName%> </h6>
 								    <p class="popup-occupation"><%=author.getOccupation()%></p>
 								    <p class="popup-email"><%=author.getEmail()%></p>
 								</div>
 						  </div>
 						</span>
+            <p><%=message.getContent()%></p>
 					</li>
 				<%}%>
 			</ul>
@@ -155,8 +154,10 @@ List<Message> messages = (List<Message>) request.getAttribute("messages");
 
 		<% if (request.getSession().getAttribute("user") != null) { %>
 			<form action="/chat/<%= conversation.getTitle() %>" method="POST">
-				<input type="text" name="message"> <br />
-				<button type="submit">Send</button>
+        <div id="outer">
+        <div class="inner"><button class="btn btn-info" type="submit">Send</button></div>
+				<div class="inner" id="text"><input style= "width:75%; background-color: #dcf4f7" class="form-control" type="text" name="message"></div>
+        </div>
 			</form>
 		<% } else { %>
 			<p>

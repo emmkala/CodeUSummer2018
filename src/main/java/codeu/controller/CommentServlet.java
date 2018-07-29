@@ -61,7 +61,7 @@ public void doPost(HttpServletRequest request, HttpServletResponse response)
 
         CommentStore.getInstance().addComment(comment);
 
-        response.sendRedirect("/user/" + user);
+      response.sendRedirect("/user/" + user);
 
   }
 

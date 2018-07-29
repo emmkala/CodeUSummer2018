@@ -64,11 +64,11 @@
 
 			<h5>About Me:</h5>
       <div class="form-group">
-  			<input style= "background-color: #c1e1dd" class="form-control" id="inputDefault" placeholder="Edit your About Me!" name="updated description" type="text"
+  			<input style= "background-color: #e8f6f7" class="form-control" id="inputDefault" placeholder="Edit your About Me!" name="updated description" type="text"
   				value="<%=user.getDescription()%>" width="300" height="200">
   			<br>
 
-  			<input stlye="background-color: #c1e1dd" class="form-control" id="inputDefault" name="updated description" type="text" value="<%=user.getDescription()%>">
+  			<input style= "background-color: #c1e1dd" class="form-control" id="inputDefault" name="updated description" type="text" value="<%=user.getDescription()%>">
       </div>
 			<br>
 			<br>
@@ -80,14 +80,14 @@
 				<p>Birthday:<%=user.getBirthdayAsString()%></p>
 			<%}%>
 
-			<input name="updated birthday" type="date">
+			<input style= "background-color: #deeeef" class="form-control" name="updated birthday" type="date">
 
 			<br>
 			<br>
 
 			<h5>Sex: </h5>
       <div class="form-group">
-			<select class="form-control" id="exampleSelect1" name="updated sex">
+			<select style= "background-color: #d0e1e2" class="form-control" id="exampleSelect1" name="updated sex">
 				<option value="MALE">Male</option>
 				<option value="FEMALE">Female</option>
 			</select>
@@ -96,16 +96,16 @@
 			<br>
 
 			<h5>Email:</h5>
-			<input style= "background-color: #c1e1dd" class="form-control" id="inputDefault" name="updated email" type="text" value="<%=user.getEmail()%>">
+			<input style= "background-color: #c0d4d6" class="form-control" id="inputDefault" name="updated email" type="text" value="<%=user.getEmail()%>">
 
 	        <div id="schoolField">
 	        	<h5>High School/University</h5>
-	        	<input  style="background-color: #c1e1dd" class="form-control" id="inputDefault" name="updated school name" type="text" name="school">
+	        	<input  style= "background-color: #a8c2c4" class="form-control" id="inputDefault" name="updated school name" type="text" name="school">
 			</div>
 
 	        <div id="schoolYearField">
 	        	<h5>Year</h5>
-	        	<select class="form-control" id="exampleSelect1" name="updated school year">
+	        	<select style= "background-color: #98b5b7" class="form-control" id="exampleSelect1" name="updated school year">
 	            	<option value=1>Freshman</option>
 	              <option value=2>Sophmore</option>
 	        		  <option value=3>Junior</option>
@@ -115,12 +115,12 @@
 
 	        <div id="employerField">
 	        	<h5>Employer</h5>
-	        	<input class="form-control" id="inputDefault" name="updated employer" type="text" name="employer">
+	        	<input style= "background-color: #a8c2c4" class="form-control" id="inputDefault" name="updated employer" type="text" name="employer">
 			</div>
 
 	        <div id="positionField">
 	        	<h5>Position</h5>
-	        	<input class="form-control" id="inputDefault" name="updated position" type="text" name="position">
+	        	<input style= "background-color: #a8c2c4" class="form-control" id="inputDefault" name="updated position" type="text" name="position">
 			</div>
 
 			<script>
@@ -185,7 +185,7 @@
 			</script>
 
 			<h5>Work Status:</h5>
-			<select class="form-control" id="exampleSelect1" name="updated work status" id="workStatus" onchange="updateFields(); removeDefault(this);">
+			<select  style= "background-color: #90b0b2" class="form-control" id="exampleSelect1" name="updated work status" id="workStatus" onchange="updateFields(); removeDefault(this);">
 				<option disabled selected value="default"> -- select an option -- </option>
 				<option value="employed">Employed</option>
 				<option value="unemployed">Unemployed</option>
@@ -194,12 +194,12 @@
 
 	        <div id="schoolField" style="display:none">
 	        	<h5>High School/University</h5>
-	        	<input class="form-control" id="inputDefault" name="updated school name" type="text" name="school">
+	        	<input style= "background-color: #a8c2c4" class="form-control" id="inputDefault" name="updated school name" type="text" name="school">
 			</div>
 
 	        <div id="schoolYearField" style="display:none">
 	        	<h5>Year</h5>
-	        	<select class="form-control" id="exampleSelect1" name="updated school year" onchange="updateFields(); removeDefault(this)">
+	        	<select style= "background-color: #98b5b7" class="form-control" id="exampleSelect1" name="updated school year" onchange="updateFields(); removeDefault(this)">
 	        		<option disabled selected value="default"> -- select an option -- </option>
 	        	    <option style="display:none;" disabled selected value="0"> -- select an option -- </option>
 	            	<option value=1>Freshman</option>
@@ -211,12 +211,12 @@
 
 	        <div id="employerField" style="display:none">
 	        	<h5>Employer</h5>
-	        	<input class="form-control" id="inputDefault" name="updated employer" type="text" name="employer">
+	        	<input style= "background-color: #a8c2c4" class="form-control" id="inputDefault" name="updated employer" type="text" name="employer">
 			</div>
 
 	        <div id="positionField" style="display:none">
 	        	<h5>Position</h5>
-	        	<input class="form-control" id="inputDefault" name="updated position" type="text" name="position">
+	        	<input style= "background-color: #a8c2c4" class="form-control" id="inputDefault" name="updated position" type="text" name="position">
 			</div>
 
 			<br>
@@ -256,7 +256,7 @@
     <div align="center">
     <h5> Make a Post! </h5>
     <form action="/post" method="POST">
-    <textarea class="form-control" id="exampleTextArea" row="4" type="text" name="post" placeholder="Post about any topic you want!"></textarea>
+    <textarea style= "background-color: #f2fbfc"class="form-control" id="exampleTextArea" row="4" type="text" name="post" placeholder="Post about any topic you want!"></textarea>
     <button class="btn btn-outline-info" type="submit">Send</button>
     </form>
     </div>
@@ -284,7 +284,7 @@
     }%>
 
       <div class="form-group">
-      <form action="/comment?post_id=<%= post.getId() %>&user=<%user.getName();%>" method="POST">
+      <form action="/comment?post_id=<%= post.getId() %>&user=<%= user.getName() %>&for_user=<%= post.getOwnerId() %>" method="POST">
       <input type="text" class="form-control form-control-sm" id="inputSmall" name="content" placeholder="Comment on This Post!"> <br />
       <button type="submit" class="btn btn-outline-secondary">Send</button>
       </form>

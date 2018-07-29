@@ -54,22 +54,21 @@
     <% if(request.getAttribute("error") != null){ %>
         <h2 style="color:red"><%= request.getAttribute("error") %></h2>
     <% } %>
-
+    <div align="center">
     <% if(request.getSession().getAttribute("user") != null){ %>
-      <h1>New Conversation</h1>
+      <h3>New Conversation</h3>
       <form action="/conversations" method="POST">
           <div class="form-group">
-            <label class="form-control-label">Title:</label>
-          <input type="text" name="conversationTitle">
+          <input style= "background-color: #c5e3e5" type="text" placeholder="Title" class="form-control" name="conversationTitle">
         </div>
 
-        <button type="submit">Create</button>
+        <button type="submit"  class="btn btn-outline-info">Create</button>
       </form>
 
       <hr/>
     <% } %>
 
-    <h1>Conversations</h1>
+    <h3>Conversations</h3>
 
     <%
     List<Conversation> conversations =
@@ -81,19 +80,21 @@
     }
     else{
     %>
-      <ul class="mdl-list">
+      <!-- <ul class="mdl-list"> -->
     <%
       for(Conversation conversation : conversations){
     %>
-      <li><a href="/chat/<%= conversation.getTitle() %>">
-        <%= conversation.getTitle() %></a></li>
+      <a href="/chat/<%= conversation.getTitle() %>" style= "color: #64a6ad">
+        <%= conversation.getTitle() %></a>
+        &emsp; &emsp;
     <%
       }
     %>
-      </ul>
+      <!--</ul>-->
     <%
     }
     %>
+  </div>
     <hr/>
   </div>
 </body>

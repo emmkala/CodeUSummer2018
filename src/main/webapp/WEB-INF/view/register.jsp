@@ -47,23 +47,25 @@
   </nav>
 
   <div id="container">
-    <h1>Register</h1>
+    <br> <br> <br>
+    <div align=center>
+    <h3>Register</h3>
 
     <% if(request.getAttribute("error") != null){ %>
         <h2 style="color:red"><%= request.getAttribute("error") %></h2>
     <% } %>
-
     <form action="/register" method="POST">
       <label for="username">Username: </label>
       <br/>
-      <input type="text" name="username" id="username">
+      <input type="text" class="form-control" style= "width:50%; background-color: #c7f0f9" name="username" id="username">
       <br/>
       <label for="password">Password: </label>
       <br/>
-      <input type="password" name="password" id="password">
+      <input type="password" class="form-control" style= "width:50%; background-color: #b7dfe8" name="password" id="password">
       <br/><br/>
-      <button type="submit">Submit</button>
+      <button class="btn btn-outline-info" type="submit">Submit</button>
     </form>
+  </div>
   </div>
 </body>
 </html>

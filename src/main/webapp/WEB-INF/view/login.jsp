@@ -47,6 +47,8 @@
   </nav>
 
   <div id="container">
+    <br> <br> <br>
+    <div align=center>
     <h1>Login</h1>
 
     <% if(request.getAttribute("error") != null){ %>
@@ -56,16 +58,17 @@
     <form action="/login" method="POST">
       <label for="username">Username: </label>
       <br/>
-      <input type="text" name="username" id="username">
+      <input type="text" class="form-control" style= "width:50%; background-color: #c7f0f9" name="username" id="username">
       <br/>
       <label for="password">Password: </label>
       <br/>
-      <input type="password" name="password" id="password">
+      <input type="password" class="form-control" style= "width:50%; background-color: #b7dfe8" name="password" id="password">
       <br/><br/>
-      <button type="submit">Login</button>
+      <button  class="btn btn-outline-info" type="submit">Login</button>
     </form>
 
     <p>New users can register <a href="/register">here</a>.</p>
+  </div>
   </div>
 </body>
 </html>
