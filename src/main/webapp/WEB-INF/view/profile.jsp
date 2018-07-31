@@ -19,7 +19,8 @@
 </head>
 <body>
   <nav class="navbar navbar-expand-lg navbar-light bg-light">
-  <a class="navbar-brand" href="/">CodeU Chat App</a>
+  <img src="whaleTaleLogoFullOutline.png" height="35px" width="35px">
+  <a class="navbar-brand" href="/">&nbsp; ECBC CodeU App</a>
   <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarColor03" aria-controls="navbarColor03" aria-expanded="false" aria-label="Toggle navigation">
   	<span class="navbar-toggler-icon"></span>
   </button>
@@ -246,7 +247,7 @@
           <div class="card-header">General Informaion</div>
              <p class="card-text">
             &emsp; Email : <%= user.getEmail()%>
-            &emsp; &nbsp Birthday : <%=user.getBirthday(new SimpleDateFormat("MM,dd,yyyy"))%></p>
+            &emsp; Birthday : <%=user.getBirthday(new SimpleDateFormat("MM,dd,yyyy"))%></p>
         </div>
         </div>
       </div>

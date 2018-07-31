@@ -35,6 +35,9 @@ public class CommentServlet extends HttpServlet{
   public void doGet(HttpServletRequest request, HttpServletResponse response)
       throws IOException, ServletException {
 
+        String usersProfile = getNameFromURL(request.getRequestURL());
+        System.out.println(usersProfile);
+
       request.getRequestDispatcher("/WEB-INF/view/profile.jsp").forward(request, response);
 
   }
@@ -42,6 +45,9 @@ public class CommentServlet extends HttpServlet{
 public void doPost(HttpServletRequest request, HttpServletResponse response)
       throws IOException, ServletException {
 
+        String usersProfile = getNameFromURL(request.getRequestURL());
+        System.out.println(usersProfile);
+        
         String stringPostId = request.getParameter("post_id");
         String content = request.getParameter("content");
         String user = (String) request.getSession().getAttribute("user");
@@ -61,8 +67,15 @@ public void doPost(HttpServletRequest request, HttpServletResponse response)
 
         CommentStore.getInstance().addComment(comment);
 
-      response.sendRedirect("/user/" + user);
+      response.sendRedirect("/user/newPerson");
 
   }
+
+  private String getNameFromURL(StringBuffer URL) {
+		String URL_String = URL.toString();
+		int usernameStartIndex = URL_String.indexOf("/user/");
+		usernameStartIndex += "/user/".length();
+		return URL_String.substring(usernameStartIndex);
+	}
 
 }
