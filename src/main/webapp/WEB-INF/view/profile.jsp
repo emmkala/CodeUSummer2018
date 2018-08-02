@@ -10,6 +10,7 @@
 <%@ page import="codeu.model.store.basic.MessageStore" %>
 <%@ page import="codeu.model.data.Post" %>
 <%@ page import="codeu.model.data.Comment" %>
+<%@ page import="java.util.UUID" %>
 
 <!DOCTYPE html>
 <html>
@@ -264,36 +265,36 @@
     <br>
     <%}%>
 
+  <div align= "center">
   <h5> Posts </h5>
-  <style>h5{text-align: center;}</style>
 
   <% List<Post> everyPost = (List<Post>) request.getAttribute("usersPosts");
   List<Comment> everyComment = (List<Comment>) request.getAttribute("totalComments"); %>
 
-  <% if(everyPost == null){ %>
-        <p> They haven't made any posts. </p>
-  <% } else { %>
-    <% for(Post post : everyPost){ %>
-      <div class="card" align="center">
-      <div class="card text-white bg-info mb-3" style="max-width: 65rem;">
-      <div class="card-body">
-      <p class="card-text"> <%=post.getContent()%> </p>
-      <%for(Comment comment : everyComment){
-          if(comment.getPostId() == post.getId()){%>
-          <p class="card-text"><small class="text-muted"><%=comment.getContent()%></small></p>
-      <% }
-    }%>
+    <% if(everyPost == null){ %>
+         <p> They haven't made any posts. </p>
+    <% } else { %>
+     <% for(Post post : everyPost){ %>
+       <div class="card" align="center">
+       <div class="card text-white bg-info mb-3" style="max-width: 65rem;">
+       <div class="card-body">
+       <p class="card-text" style="font-size:25px"> <%=post.getContent()%> </p>
+       <%for(Comment comment : everyComment){
+           if(comment.getPostId().equals(post.getId())){
+             String ownerName = UserStore.getInstance().getUser(comment.getOwnerId()).getName();%>
+           <p class="card-text"><small style="color: #effeff"><%=ownerName%> - <%=comment.getContent()%></small></p>
+       <% }
+     }%>
 
-      <div class="form-group">
-      <form action="/comment?post_id=<%= post.getId() %>&user=<%= user.getName() %>&for_user=<%= post.getOwnerId() %>" method="POST">
-      <input type="text" class="form-control form-control-sm" id="inputSmall" name="content" placeholder="Comment on This Post!"> <br />
-      <button type="submit" class="btn btn-outline-secondary">Send</button>
-      </form>
+       <div class="form-group">
+       <form action="/comment?post_id=<%= post.getId() %>&user=<%= user.getName() %>&for_user=<%= requestedProfile %>" method="POST">
+       <input type="text" class="form-control form-control-sm" id="inputSmall" name="content" placeholder="Comment on This Post!"> <br />
+       <button type="submit" class="btn btn-outline-secondary">Send</button>
+       </form>
 
-    </div></div></div></div>
-  <% }
-  } %>
-
-
+     </div></div></div></div>
+    <% }
+    } %>
+  </div>
 </body>
 </html>

@@ -45,12 +45,10 @@ public class CommentServlet extends HttpServlet{
 public void doPost(HttpServletRequest request, HttpServletResponse response)
       throws IOException, ServletException {
 
-        String usersProfile = getNameFromURL(request.getRequestURL());
-        System.out.println(usersProfile);
-        
         String stringPostId = request.getParameter("post_id");
         String content = request.getParameter("content");
         String user = (String) request.getSession().getAttribute("user");
+        String username = (String) request.getParameter("for_user");
 
         UUID postId = UUID.fromString(stringPostId);
 
@@ -67,7 +65,7 @@ public void doPost(HttpServletRequest request, HttpServletResponse response)
 
         CommentStore.getInstance().addComment(comment);
 
-      response.sendRedirect("/user/newPerson");
+      response.sendRedirect("/user/" + username);
 
   }
 
