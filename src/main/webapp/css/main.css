@@ -12,47 +12,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-body {
-  margin: 0;
-  font-family: sans-serif;
-  line-height: 1.6;
-  font-size: 18px;
-  line-height: 1.6;
-  color: #444;
-  background-color: #eeeeee;
-}
-
-nav {
-  background-color: #283593;
-}
-
-nav a {
-  color: white;
-  display: inline-block;
-  font-size: 24px;
-  margin: 15px;
-  text-decoration: none;
-}
-
-#navTitle {
-  font-size: 36px;
-}
-
-#container {
+.center{
+  display: block;
   margin-left: auto;
   margin-right: auto;
-  width: 800px;
+  width: 10%;
 }
 
-h1 {
-  color: #757575;
+.team {
+  float: left;
+  width: 33.33%;
+  padding: 5px;
 }
 
-input {
-  font-size: 18px;
+.teamRow::after {
+  content: "";
+  clear: both;
+  display: table;
 }
 
-button {
-  font-size: 18px;
+.profile{
+  border-radius: 80%;
 }

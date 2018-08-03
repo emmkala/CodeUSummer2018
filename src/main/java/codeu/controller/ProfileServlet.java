@@ -31,14 +31,17 @@ import com.google.appengine.api.images.ImagesServiceFactory;
 import codeu.model.data.User.Sex;
 import codeu.model.data.User;
 import codeu.model.store.basic.UserStore;
-import codeu.model.store.basic.MessageStore;
-import codeu.model.data.Message;
+import codeu.model.store.basic.PostStore;
+import codeu.model.store.basic.CommentStore;
+import codeu.model.data.Post;
+import codeu.model.data.Comment;
 
 import java.util.*;
 
 public class ProfileServlet extends HttpServlet {
 	private UserStore userStore;
-	private MessageStore messageStore;
+	private PostStore postStore;
+	private CommentStore commentStore;
 
 	BlobstoreService blobstoreService;
 	ImagesService imagesService;
@@ -46,9 +49,10 @@ public class ProfileServlet extends HttpServlet {
 	@Override
 	public void init() throws ServletException {
 		super.init();
-		userStore = UserStore.getInstance();	
+		postStore = PostStore.getInstance();
+		commentStore = CommentStore.getInstance();
+		userStore = UserStore.getInstance();
 		//Some necessities for grabbing images
-		messageStore = messageStore.getInstance();
 		blobstoreService = BlobstoreServiceFactory.getBlobstoreService();
 		imagesService = ImagesServiceFactory.getImagesService();
 	}
@@ -65,20 +69,20 @@ public class ProfileServlet extends HttpServlet {
 		if(newBirthday != null) {
 			user.setBirthday(parseDate(newBirthday));
 		}
-		
+
 		//Sets the description from the user's form if it's been filled out
 		String newDescription = request.getParameter("updated description");
 		//Using short circuit boolean to avoid NullPointerException
 		if(newDescription != null && !newDescription.trim().equals("")) {
 			user.setDescription(newDescription);
 		}
-		
+
 		//Sets the sex from the user's form if it's been changed
 		String newSex = request.getParameter("updated sex");
 		if(newSex != null && !newSex.equals("default")) {
 			user.setSex(Sex.valueOf(newSex));
 		}
-		
+
 		//Sets the email from the user's form if it's been filled out
 		String newEmail = request.getParameter("updated email");
 		if(newEmail != null && !newEmail.trim().equals("")) {
@@ -118,11 +122,15 @@ public class ProfileServlet extends HttpServlet {
 			return;
 		}
 
-		List<Message> allMessages = messageStore.getAllMessages();
+		User currentUser = userStore.getUser(profileRequestName);
+		UUID currentUserID = currentUser.getId();
 
-		request.setAttribute("totalMessages", allMessages);
+		List<Post> allUsersPosts = postStore.getPostsByUserID(currentUserID.toString());
+		request.setAttribute("usersPosts", allUsersPosts);
 
-		
+		List<Comment> allComments  = commentStore.getAllComments();
+		request.setAttribute("totalComments", allComments);
+
 		if (!userStore.isUserRegistered(profileRequestName)) {
 			response.sendRedirect("../404.html");
 			return;

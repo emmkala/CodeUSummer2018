@@ -32,7 +32,7 @@
 
 .popup-name {
   position: absolute;
-  bottom: 72px;
+  bottom: 100px;
   left: 125px;
   white-space: nowrap;
 }
@@ -66,4 +66,15 @@ a {
 	background-color: white;
 	height: 500px;
 	overflow-y: scroll
+}
+
+#outer {
+    width:100%;
+    text-align: left;
+}
+.inner {
+    display: inline-block;
+}
+#text {
+  width: 75%;
 }

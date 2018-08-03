@@ -114,7 +114,10 @@ public class PersistentStorageAgent {
     return persistentDataStore.loadComments();
   }
 
-  public List<Comment> getCommentsForPost(UUID postId) throws PersistentDataStoreException {
+  public List<Post> getPostsForUser(String userId) {
+    return persistentDataStore.getPostsForUser(userId);
+  }
+  public List<Comment> getCommentsForPost(String postId) throws PersistentDataStoreException {
     return persistentDataStore.getCommentsForPost(postId);
   }
 
@@ -126,4 +129,5 @@ public class PersistentStorageAgent {
   public void writeThrough(Post post) {persistentDataStore.writeThrough(post);}
 
   public void writeThrough(Comment comment) {persistentDataStore.writeThrough(comment);}
+
 }

@@ -55,7 +55,7 @@
     <servlet-name>ChatServlet</servlet-name>
     <url-pattern>/chat/*</url-pattern>
   </servlet-mapping>
-  
+
   <servlet>
     <servlet-name>RegisterServlet</servlet-name>
     <servlet-class>codeu.controller.RegisterServlet</servlet-class>
@@ -65,7 +65,7 @@
     <servlet-name>RegisterServlet</servlet-name>
     <url-pattern>/register</url-pattern>
   </servlet-mapping>
-  
+
   <servlet>
     <servlet-name>AdminServlet</servlet-name>
     <servlet-class>codeu.controller.AdminServlet</servlet-class>
@@ -84,15 +84,37 @@
   <servlet-mapping>
   	<servlet-name>ProfileServlet</servlet-name>
   	<url-pattern>/user/*</url-pattern>
+    <url-pattern>/profile</url-pattern>
   </servlet-mapping>
 
   <servlet>
   	<servlet-name>UploadServlet</servlet-name>
   	<servlet-class>codeu.controller.UploadServlet</servlet-class>
   </servlet>
-  
+
   <servlet-mapping>
   	<servlet-name>UploadServlet</servlet-name>
   	<url-pattern>/upload</url-pattern>
   </servlet-mapping>
+
+  <servlet>
+  	<servlet-name>PostServlet</servlet-name>
+  	<servlet-class>codeu.controller.PostServlet</servlet-class>
+  </servlet>
+
+  <servlet-mapping>
+  	<servlet-name>PostServlet</servlet-name>
+  	<url-pattern>/post</url-pattern>
+  </servlet-mapping>
+
+  <servlet>
+  	<servlet-name>CommentServlet</servlet-name>
+  	<servlet-class>codeu.controller.CommentServlet</servlet-class>
+  </servlet>
+
+  <servlet-mapping>
+  	<servlet-name>CommentServlet</servlet-name>
+  	<url-pattern>/comment</url-pattern>
+  </servlet-mapping>
+
 </web-app>

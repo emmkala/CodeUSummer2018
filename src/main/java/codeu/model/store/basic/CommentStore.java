@@ -34,8 +34,14 @@ public class CommentStore {
         commentList = new ArrayList<>();
     }
 
-    public List<Comment> getAllComment() throws Exception {
-        return persistentStorageAgent.loadComments();
+    public List<Comment> getAllComments() {
+        try  {
+            return persistentStorageAgent.loadComments();
+        } catch(Exception e) {
+            System.out.println("Unable to getAllComments()");
+            System.out.println(e);
+            return new ArrayList<>();
+        }
     }
 
     public void addComment(Comment comment) {
@@ -43,49 +49,23 @@ public class CommentStore {
         persistentStorageAgent.writeThrough(comment);
     }
 
-    /**public Map<Comment, List<List<Comment>>> getAllCommentsInPost(UUID postId) {
-        Map<Comment, List<List<Comment>>> commentInPost = new HashMap<>();
-        for (Comment comment : commentList) {
-            //add comment when the postId is the same as the given ID
-            if (comment.getPostId() == postId) {
-                // if it is the first comment of the post
-                if (comment.getParentId() == null) {
-                    commentInPost.put(comment, null);
-                } else { //otherwise it is the reply of some other comments (have parents)
-                    UUID parentId = comment.getParentId();
-                    if (commentInPost.containsKey(parentId)) { //if it is the reply of the first comments
-                        if (commentInPost.get(parentId) == null) { //then the reply becomes the list (first reply)
-                            commentInPost.put(comment, new ArrayList<>()); //makes a new list
-                            List<Comment> theList = new ArrayList<>();
-                            theList.add(comment);
-                            commentInPost.get(parentId).add(theList); //list within a list
-                        } else { //other replies of the first comments
-                            List<Comment> theList = new ArrayList<>();
-                            theList.add(comment);
-                            commentInPost.get(parentId).add(theList);
-                        }
-                    } else { //reply of a reply
-                        for (Map.Entry<Comment, List<List<Comment>>> entry : commentInPost.entrySet()) {
-                            for (List<Comment> each : entry.getValue()) {
-                                if (each.get(each.size() - 1).getId() == parentId) {
-                                    //the last elem of the list within a list should be the parent of the curr comment
-                                    each.add(comment);
-                                    break;
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        return commentInPost;
-    }**/
+    public List<Comment> getAllCommentsInPost(String postId) {
 
-    public List<Comment> getAllCommentsInPost(UUID postId) throws Exception {
+        UUID id = UUID.fromString(postId);
 
         // gets all comments with same postId into a list
-        List<Comment> allCommentsInPost = persistentStorageAgent.getCommentsForPost(postId).
-                stream().filter(comment -> comment.getPostId() == postId).collect(Collectors.toList());
+        List<Comment> allCommentsInPost = new ArrayList<>();
+        try {
+            List<Comment> comments = persistentStorageAgent
+                .getCommentsForPost(postId)
+                .stream()
+                .filter(comment -> comment.getPostId() == id)
+                .collect(Collectors.toList());
+            allCommentsInPost.addAll(comments);
+        } catch (Exception e) {
+            System.out.println("Unable to get comments for post");
+            System.out.println(e);
+        }
 
         //separates them into ancestors and children
         List<Comment> ancestors = allCommentsInPost.stream().filter(comment -> comment.getParentId() == null)

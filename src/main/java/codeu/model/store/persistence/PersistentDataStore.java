@@ -85,35 +85,35 @@ public class PersistentDataStore {
 				} catch(Exception e) {
 					//Do nothing
 				}
-				
+
 				try {
 					String description = (String) entity.getProperty("description");
 					user.setDescription(description);
 				} catch(Exception e) {
 					//Do nothing
 				}
-				
+
 				try {
 					String occupationString = (String) entity.getProperty("occupation");
 					user.setOccupation(user.parseOccupation(occupationString));
 				} catch(Exception e) {
 					//Do nothing
 				}
-				
+
 				try {
 					String sexString = (String) entity.getProperty("sex");
 					user.setSex(Sex.valueOf(sexString));
 				} catch(Exception e) {
 					//Do nothing
 				}
-				
+
 				try {
 					String email = (String) entity.getProperty("email");
 					user.setEmail(email);
 				} catch(Exception e) {
 					//Do nothing
 				}
-				
+
 				try {
 					String profileImageString = (String) entity.getProperty("profile_image");
 					if(profileImageString != null && !profileImageString.trim().equals("")) {
@@ -124,8 +124,8 @@ public class PersistentDataStore {
 				} catch(Exception e) {
 					//Do nothing
 				}
-				
-				
+
+
 				users.add(user);
 			} catch (Exception e) {
 				// In a production environment, errors should be very rare. Errors which may
@@ -216,7 +216,7 @@ public class PersistentDataStore {
 		userEntity.setProperty("creation_time", user.getCreationTime().toString());
 		userEntity.setProperty("birthday", user.getBirthday(new SimpleDateFormat("yyyy-MM-dd")));
 		userEntity.setProperty("description", user.getDescription());
-		userEntity.setProperty("sex", user.getSex().toString());
+		//userEntity.setProperty("sex", user.getSex().toString());
 		userEntity.setProperty("email", user.getEmail());
 		userEntity.setProperty("occupation", user.getOccupation().storableValue());
 		userEntity.setProperty("profile_image", user.getProfileImage().getURL());
@@ -251,13 +251,13 @@ public class PersistentDataStore {
 		for(Entity user: results.asIterable()) {
 			datastore.delete(user.getKey());
 		}
-		
+
 		Query conversations = new Query("chat-conversations");
 		results = datastore.prepare(conversations);
 		for(Entity conversation: results.asIterable()) {
 			datastore.delete(conversation.getKey());
 		}
-		
+
 		Query messages = new Query("chat-messages");
 		results = datastore.prepare(messages);
 		for(Entity message: results.asIterable()) {
@@ -326,12 +326,13 @@ public class PersistentDataStore {
       commentEntity.setProperty("content", comment.getContent());
       datastore.put(commentEntity);
   }
-  
-  public List<Post> getPostsForUser(UUID userId){
+
+
+  public List<Post> getPostsForUser(String userId){
 	  Filter filter = new FilterPredicate("owner_uuid", FilterOperator.EQUAL, userId);
 	  Query query = new Query("posts").setFilter(filter);
 	  PreparedQuery pq = datastore.prepare(query);
-	  
+
 	  ArrayList<Post> out = new ArrayList<Post>();
 	  for(Entity ent: pq.asIterable()) {
 		  UUID uuid = UUID.fromString((String) ent.getProperty("uuid"));
@@ -339,15 +340,15 @@ public class PersistentDataStore {
 		  Instant creationTime = Instant.parse((String) ent.getProperty("creation_time"));
 		  out.add(new Post(uuid, ownerUuid, creationTime, (String) ent.getProperty("content")));
 	  }
-	  
+
 	  return out;
   }
-  
-  public List<Comment> getCommentsForPost(UUID postId){
+
+  public List<Comment> getCommentsForPost(String postId){
 	  Filter filter = new FilterPredicate("post_uuid", FilterOperator.EQUAL, postId);
 	  Query query = new Query("comments").setFilter(filter);
 	  PreparedQuery pq = datastore.prepare(query);
-	  
+
 	  ArrayList<Comment> out = new ArrayList<Comment>();
 	  for(Entity ent: pq.asIterable()) {
 		  UUID uuid = UUID.fromString((String) ent.getProperty("uuid"));
@@ -357,7 +358,7 @@ public class PersistentDataStore {
 		  UUID parentUuid = UUID.fromString((String) ent.getProperty("parent_uuid"));
 		  out.add(new Comment(uuid, ownerUuid, creationTime, postUuid, parentUuid, (String) ent.getProperty("content")));
 	  }
-	  
+
 	  return out;
-  	}
+  }
 }
