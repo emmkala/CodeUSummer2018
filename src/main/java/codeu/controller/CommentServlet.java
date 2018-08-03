@@ -34,10 +34,6 @@ public class CommentServlet extends HttpServlet{
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response)
       throws IOException, ServletException {
-
-        String usersProfile = getNameFromURL(request.getRequestURL());
-        System.out.println(usersProfile);
-
       request.getRequestDispatcher("/WEB-INF/view/profile.jsp").forward(request, response);
 
   }

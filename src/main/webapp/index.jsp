@@ -20,7 +20,6 @@
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootswatch/4.1.2/litera/bootstrap.min.css">
 </head>
 <body>
-
   <nav class="navbar navbar-expand-lg navbar-light bg-light">
   <img src="whaleTaleLogoFullOutline.png" height="35px" width="35px">
   <a class="navbar-brand" href="/">&nbsp; ECBC CodeU App</a>
@@ -33,13 +32,14 @@
   		<li class="nav-item active">
   			<a class="nav-link" href="/conversations">Conversations <span class="sr-only">(current)</span></a>
   		</li>
-  		<li class="nav-item">
-  			<% if(request.getSession().getAttribute("user") != null){ %>
-  				<a class="nav-link"> Hello <%=request.getSession().getAttribute("user") %>!</a>
+      <li class="nav-item">
+  			<% if(request.getSession().getAttribute("user") != null){
+          String profileName = String.valueOf(request.getSession().getAttribute("user"));%>
+  				<a class="nav-link" href=<%="/user/"+profileName%>> Hello <%=request.getSession().getAttribute("user") %>!</a>
   			<% } else{ %>
   					<a class="nav-link" href="/login">Login</a>
   			<% } %>
-  		</li>
+      </li>
   		<li class="nav-item">
   			<a class="nav-link" href="/about.jsp">About</a>
   		</li>

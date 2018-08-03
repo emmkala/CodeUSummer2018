@@ -18,3 +18,19 @@
   margin-right: auto;
   width: 10%;
 }
+
+.team {
+  float: left;
+  width: 33.33%;
+  padding: 5px;
+}
+
+.teamRow::after {
+  content: "";
+  clear: both;
+  display: table;
+}
+
+.profile{
+  border-radius: 80%;
+}
